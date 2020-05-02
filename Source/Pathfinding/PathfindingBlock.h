@@ -26,19 +26,19 @@ public:
 	/** Are we currently active? */
 	bool bIsActive;
 
-	UPROPERTY(Category=Algorithm, VisibleAnywhere)
+	UPROPERTY(Category = Algorithm, VisibleAnywhere, BlueprintReadWrite)
 	bool bVisited;
 
-	UPROPERTY(Category=Algorithm, VisibleAnywhere)
+	UPROPERTY(Category = Algorithm, VisibleAnywhere, BlueprintReadWrite)
 	int Distance;
 
-	UPROPERTY(Category = Algorithm, VisibleAnywhere)
+	UPROPERTY(Category = Algorithm, VisibleAnywhere, BlueprintReadOnly)
 	bool bIsWall;
 
-	UPROPERTY(Category = Algorithm, VisibleAnywhere)
+	UPROPERTY(Category = Algorithm, VisibleAnywhere, BlueprintReadOnly)
 	bool bIsStart;
 
-	UPROPERTY(Category = Algorithm, VisibleAnywhere)
+	UPROPERTY(Category = Algorithm, VisibleAnywhere, BlueprintReadOnly)
 	bool bIsEnd;
 
 	/** Pointer to white material used on the focused block */

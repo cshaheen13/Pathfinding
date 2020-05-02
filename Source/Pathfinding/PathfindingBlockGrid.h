@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "PathfindingBlock.h"
 #include "PathfindingBlockGrid.generated.h"
 
 /** Class used to spawn blocks and manage score */
@@ -48,6 +49,9 @@ public:
 	FORCEINLINE class USceneComponent* GetDummyRoot() const { return DummyRoot; }
 	/** Returns ScoreText subobject **/
 	FORCEINLINE class UTextRenderComponent* GetScoreText() const { return ScoreText; }
+
+	UPROPERTY(BlueprintReadOnly)
+	TArray<APathfindingBlock*> BlockArray;
 };
 
 

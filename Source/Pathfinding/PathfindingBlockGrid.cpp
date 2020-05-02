@@ -44,6 +44,7 @@ void APathfindingBlockGrid::BeginPlay()
 
 		// Spawn a block
 		APathfindingBlock* NewBlock = GetWorld()->SpawnActor<APathfindingBlock>(BlockLocation, FRotator(0,0,0));
+		BlockArray.Add(NewBlock);
 
 		// Tell the block about its owner
 		if (NewBlock != nullptr)
@@ -51,6 +52,12 @@ void APathfindingBlockGrid::BeginPlay()
 			NewBlock->OwningGrid = this;
 		}
 	}
+
+	//for (int32 Index = 0; Index != BlockArray.Num(); ++Index)
+	//{
+	//	FString test = BlockArray[Index]->GetName();
+	//	UE_LOG(LogTemp, Warning, TEXT("Test = %s"), *test);
+	//}
 }
 
 

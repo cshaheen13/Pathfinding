@@ -49,9 +49,7 @@ public:
 	void DijkstraAlgorithm();
 
 	UFUNCTION(BlueprintCallable)
-	void SortBlocksByDistance(TArray<APathfindingBlock*> UnvisitedArray, int LeftIndex, int RightIndex);
-
-	void Swap(APathfindingBlock* a, APathfindingBlock* b);
+	TArray<APathfindingBlock*> SortBlocksByDistance(TArray<APathfindingBlock*> UnvisitedArray, int LeftIndex, int RightIndex);
 
 	/** Returns DummyRoot subobject **/
 	FORCEINLINE class USceneComponent* GetDummyRoot() const { return DummyRoot; }

@@ -66,7 +66,21 @@ void APathfindingBlockGrid::AddScore()
 
 void APathfindingBlockGrid::DijkstraAlgorithm()
 {
-	SortBlocksByDistance(BlockArray, 0, BlockArray.Num() - 1);
+	TArray <APathfindingBlock*> VisitedNodesInOrder;
+	while (BlockArray.Num() != 0)
+	{
+		//Sort block array by distance
+		BlockArray = SortBlocksByDistance(BlockArray, 0, BlockArray.Num() - 1);
+		//Set 1st element to visited
+		BlockArray[0]->bVisited = true;
+		//Remove 1st element (should be closest node)
+		BlockArray.RemoveAt(0);
+		//Push visited node to VisitedNodesInOrder Array
+
+		//If 1st element->bIsEnd then return VisitedNodesInOrder
+
+		//Push neighbor nodes (line trace?) to NeighborArray
+	}
 
 	for (int32 Index = 0; Index != BlockArray.Num(); ++Index)
 	{
@@ -76,74 +90,32 @@ void APathfindingBlockGrid::DijkstraAlgorithm()
 		UE_LOG(LogTemp, Warning, TEXT("Test = %i"), testDistance);
 	}
 
-	//TArray <APathfindingBlock*> VisitedNodesInOrder;
-	//while (BlockArray.Num != 0)
-	//{
-	//	SortBlocksByDistance(BlockArray, 0, BlockArray.Num - 1);
-	//}
+	for (int32 Index = 0; Index != BlockArray.Num(); ++Index)
+	{
+		FString test = BlockArray[Index]->GetName();
+		UE_LOG(LogTemp, Warning, TEXT("Name = %s"), *test);
+	}
 
 }
 
-void APathfindingBlockGrid::SortBlocksByDistance(TArray<APathfindingBlock*> UnvisitedArray, int LeftIndex, int RightIndex)
+TArray<APathfindingBlock*> APathfindingBlockGrid::SortBlocksByDistance(TArray<APathfindingBlock*> UnvisitedArray, int LeftIndex, int RightIndex)
 {
-	UE_LOG(LogTemp, Warning, TEXT("Sort"));
 	for (int i = LeftIndex + 1; i <= RightIndex; i++)
 	{
 		int temp = UnvisitedArray[i]->Distance;
+		APathfindingBlock* tempObj = UnvisitedArray[i];
 		int j = i - 1;
 		while (j >= LeftIndex && UnvisitedArray[j]->Distance > temp)
 		{
-			UnvisitedArray[j + 1] = UnvisitedArray[j];
+			//UnvisitedArray[j + 1] = UnvisitedArray[j];
+			UE_LOG(LogTemp, Warning, TEXT("Swapping %s"), *UnvisitedArray[j+1]->GetName());
+			UE_LOG(LogTemp, Warning, TEXT("with %s"), *UnvisitedArray[j]->GetName());
+			UnvisitedArray.Swap(j + 1, j);
 			j--;
 		}
-		UnvisitedArray[j + 1]->Distance = temp;
 	}
 
-	//// Base case: No need to sort arrays of length <= 1
-	//if (LeftIndex >= RightIndex)
-	//{
-	//	UE_LOG(LogTemp, Warning, TEXT("No Sort"));
-	//	return;
-	//}
-
-	//UE_LOG(LogTemp, Warning, TEXT("Start Sort"));
-	//// Choose pivot to be the last element in the subarray
-	//int pivot = UnvisitedArray[RightIndex]->Distance;
-
-	//// Index indicating the "split" between elements smaller than pivot and 
-	//// elements greater than pivot
-	//int count = LeftIndex;
-
-	//// Traverse through array from l to r
-	//for (int i = LeftIndex; i <= RightIndex; i++)
-	//{
-	//	// If an element less than or equal to the pivot is found...
-	//	if (UnvisitedArray[i]->Distance < pivot)
-	//	{
-	//		// Then swap arr[cnt] and arr[i] so that the smaller element arr[i] 
-	//		// is to the left of all elements greater than pivot
-	//		Swap(UnvisitedArray[count], UnvisitedArray[i]);
-	//		UE_LOG(LogTemp, Warning, TEXT("Swap"));
-
-	//		// Make sure to increment cnt so we can keep track of what to swap
-	//		// arr[i] with
-	//		count++;
-	//	}
-	//}
-
-	//// NOTE: cnt is currently at one plus the pivot's index 
-	//// (Hence, the cnt-2 when recursively sorting the left side of pivot)
-	//SortBlocksByDistance(UnvisitedArray, LeftIndex, count - 2); // Recursively sort the left side of pivot
-	//SortBlocksByDistance(UnvisitedArray, count, RightIndex);   // Recursively sort the right side of pivot
-}
-
-void APathfindingBlockGrid::Swap(APathfindingBlock* a, APathfindingBlock* b)
-{
-	UE_LOG(LogTemp, Warning, TEXT("a = %s"), *a->GetName());
-	UE_LOG(LogTemp, Warning, TEXT("b = %s"), *b->GetName());
-	APathfindingBlock* temp = a;
-	a = b;
-	b = temp;
+	return UnvisitedArray;
 }
 
 #undef LOCTEXT_NAMESPACE

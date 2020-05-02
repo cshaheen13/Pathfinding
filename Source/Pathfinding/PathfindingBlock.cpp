@@ -17,16 +17,16 @@ APathfindingBlock::APathfindingBlock()
 		ConstructorHelpers::FObjectFinderOptional<UStaticMesh> PlaneMesh;
 		ConstructorHelpers::FObjectFinderOptional<UMaterial> BaseMaterial;
 		ConstructorHelpers::FObjectFinderOptional<UMaterialInstance> BlueMaterial;
-		ConstructorHelpers::FObjectFinderOptional<UMaterialInstance> OrangeMaterial;
-		//ConstructorHelpers::FObjectFinderOptional<UMaterialInstance> StartMaterial;
-		//ConstructorHelpers::FObjectFinderOptional<UMaterialInstance> EndMaterial;
+		ConstructorHelpers::FObjectFinderOptional<UMaterialInstance> WallMaterial;
+		ConstructorHelpers::FObjectFinderOptional<UMaterialInstance> StartMaterial;
+		ConstructorHelpers::FObjectFinderOptional<UMaterialInstance> EndMaterial;
 		FConstructorStatics()
 			: PlaneMesh(TEXT("/Game/Puzzle/Meshes/PuzzleCube.PuzzleCube"))
 			, BaseMaterial(TEXT("/Game/Puzzle/Meshes/BaseMaterial.BaseMaterial"))
 			, BlueMaterial(TEXT("/Game/Puzzle/Meshes/BlueMaterial.BlueMaterial"))
-			, OrangeMaterial(TEXT("/Game/Puzzle/Meshes/OrangeMaterial.OrangeMaterial"))
-			//, StartMaterial(TEXT("/Game/Puzzle/Meshes/M_Metal_Gold.M_Metal_Gold'"))
-			//, EndMaterial(TEXT("/Game/Puzzle/Meshes/M_Tech_Hex_Tile_Pulse.M_Tech_Hex_Tile_Pulse'"))
+			, WallMaterial(TEXT("/Game/Puzzle/Meshes/WallMaterial.WallMaterial"))
+			, StartMaterial(TEXT("/Game/Puzzle/Meshes/GoldMaterial.GoldMaterial"))
+			, EndMaterial(TEXT("/Game/Puzzle/Meshes/M_Tech_Hex_Tile_Pulse_Inst.M_Tech_Hex_Tile_Pulse_Inst"))
 		{
 		}
 	};
@@ -39,35 +39,41 @@ APathfindingBlock::APathfindingBlock()
 	// Create static mesh component
 	BlockMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("BlockMesh0"));
 	BlockMesh->SetStaticMesh(ConstructorStatics.PlaneMesh.Get());
-	BlockMesh->SetRelativeScale3D(FVector(0.5f,0.5f,0.25f));
+	BlockMesh->SetRelativeScale3D(FVector(0.25f,0.25f,0.0625f));
 	BlockMesh->SetRelativeLocation(FVector(0.f,0.f,25.f));
 	BlockMesh->SetMaterial(0, ConstructorStatics.BlueMaterial.Get());
 	BlockMesh->SetupAttachment(DummyRoot);
-	//BlockMesh->OnClicked.AddDynamic(this, &APathfindingBlock::BlockClicked);
-	//BlockMesh->OnInputTouchBegin.AddDynamic(this, &APathfindingBlock::OnFingerPressedBlock);
+	BlockMesh->OnClicked.AddDynamic(this, &APathfindingBlock::BlockClicked);
+	BlockMesh->OnInputTouchBegin.AddDynamic(this, &APathfindingBlock::OnFingerPressedBlock);
 
 	// Save a pointer to the orange material
 	BaseMaterial = ConstructorStatics.BaseMaterial.Get();
 	BlueMaterial = ConstructorStatics.BlueMaterial.Get();
-	OrangeMaterial = ConstructorStatics.OrangeMaterial.Get();
-	//StartMaterial = ConstructorStatics.StartMaterial.Get();
-	//EndMaterial = ConstructorStatics.EndMaterial.Get();
+	WallMaterial = ConstructorStatics.WallMaterial.Get();
+	StartMaterial = ConstructorStatics.StartMaterial.Get();
+	EndMaterial = ConstructorStatics.EndMaterial.Get();
+
+	Distance = 999;
+	bVisited = false;
+	bIsWall = false;
+	bIsStart = false;
+	bIsEnd = false;
 }
 
 void APathfindingBlock::BlockClicked(UPrimitiveComponent* ClickedComp, FKey ButtonClicked)
 {
 	FString Button = ButtonClicked.ToString();
 	UE_LOG(LogTemp, Warning, TEXT("Key Pressed = %s"), *Button);
-	HandleClicked();
+	HandleClicked("Wall");
 }
 
 
 void APathfindingBlock::OnFingerPressedBlock(ETouchIndex::Type FingerIndex, UPrimitiveComponent* TouchedComponent)
 {
-	HandleClicked();
+	HandleClicked("Trigger");
 }
 
-void APathfindingBlock::HandleClicked()
+void APathfindingBlock::HandleClicked(FString HighlightType)
 {
 	// Check we are not already active
 	if (!bIsActive)
@@ -75,12 +81,37 @@ void APathfindingBlock::HandleClicked()
 		bIsActive = true;
 
 		// Change material
-		BlockMesh->SetMaterial(0, OrangeMaterial);
-
+		if (HighlightType == "Wall")
+		{
+			BlockMesh->SetMaterial(0, WallMaterial);
+			bIsWall = true;
+		}
+		else if (HighlightType == "Start")
+		{
+			BlockMesh->SetMaterial(0, StartMaterial);
+			bIsStart = true;
+		}
+		else if (HighlightType == "End")
+		{
+			BlockMesh->SetMaterial(0, EndMaterial);
+			bIsEnd = true;
+		}
 		// Tell the Grid
 		if (OwningGrid != nullptr)
 		{
 			OwningGrid->AddScore();
+		}
+	}
+	else
+	{
+		if (HighlightType == "Reset")
+		{
+		BlockMesh->SetMaterial(0, BlueMaterial);
+		UE_LOG(LogTemp, Warning, TEXT("Reset Wall In PathfindingBlock"));
+		bIsActive = false;
+		bIsWall = false;
+		bIsStart = false;
+		bIsEnd = false;
 		}
 	}
 }
@@ -93,12 +124,12 @@ void APathfindingBlock::Highlight(bool bOn)
 		return;
 	}
 
-	if (bOn)
-	{
-		BlockMesh->SetMaterial(0, BaseMaterial);
-	}
-	else
-	{
-		BlockMesh->SetMaterial(0, BlueMaterial);
-	}
+	//if (bOn)
+	//{
+	//	BlockMesh->SetMaterial(0, BaseMaterial);
+	//}
+	//else
+	//{
+	//	BlockMesh->SetMaterial(0, BlueMaterial);
+	//}
 }

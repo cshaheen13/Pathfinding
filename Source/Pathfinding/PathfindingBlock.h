@@ -26,6 +26,21 @@ public:
 	/** Are we currently active? */
 	bool bIsActive;
 
+	UPROPERTY(Category=Algorithm, VisibleAnywhere)
+	bool bVisited;
+
+	UPROPERTY(Category=Algorithm, VisibleAnywhere)
+	int Distance;
+
+	UPROPERTY(Category = Algorithm, VisibleAnywhere)
+	bool bIsWall;
+
+	UPROPERTY(Category = Algorithm, VisibleAnywhere)
+	bool bIsStart;
+
+	UPROPERTY(Category = Algorithm, VisibleAnywhere)
+	bool bIsEnd;
+
 	/** Pointer to white material used on the focused block */
 	UPROPERTY()
 	class UMaterial* BaseMaterial;
@@ -36,7 +51,7 @@ public:
 
 	/** Pointer to orange material used on active blocks */
 	UPROPERTY()
-	class UMaterialInstance* OrangeMaterial;
+	class UMaterialInstance* WallMaterial;
 
 	/** Pointer to orange material used on the start block */
 	UPROPERTY()
@@ -58,7 +73,7 @@ public:
 	UFUNCTION()
 	void OnFingerPressedBlock(ETouchIndex::Type FingerIndex, UPrimitiveComponent* TouchedComponent);
 
-	void HandleClicked();
+	void HandleClicked(FString HighlightType);
 
 	void Highlight(bool bOn);
 

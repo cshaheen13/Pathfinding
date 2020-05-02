@@ -25,7 +25,12 @@ protected:
 	void SetStart();
 	void SetEnd();
 	void SetWall();
+	void ReleaseWall();
+	void ResetBlock();
+	void ReleaseReset();
 	void TraceForBlock(const FVector& Start, const FVector& End, bool bDrawDebugHelpers);
+	bool bLeftMouseHeld = false;
+	bool bRightMouseHeld = false;
 
 	UPROPERTY(EditInstanceOnly, BlueprintReadWrite)
 	class APathfindingBlock* CurrentBlockFocus;

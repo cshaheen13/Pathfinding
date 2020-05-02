@@ -48,6 +48,9 @@ void APathfindingPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 	PlayerInputComponent->BindAction("SetStart", EInputEvent::IE_Pressed, this, &APathfindingPawn::SetStart);
 	PlayerInputComponent->BindAction("SetEnd", EInputEvent::IE_Pressed, this, &APathfindingPawn::SetEnd);
 	PlayerInputComponent->BindAction("SetWall", EInputEvent::IE_Pressed, this, &APathfindingPawn::SetWall);
+	PlayerInputComponent->BindAction("SetWall", EInputEvent::IE_Released, this, &APathfindingPawn::ReleaseWall);
+	PlayerInputComponent->BindAction("ResetBlock", EInputEvent::IE_Pressed, this, &APathfindingPawn::ResetBlock);
+	PlayerInputComponent->BindAction("ResetBlock", EInputEvent::IE_Released, this, &APathfindingPawn::ReleaseReset);
 }
 
 void APathfindingPawn::CalcCamera(float DeltaTime, struct FMinimalViewInfo& OutResult)
@@ -66,7 +69,7 @@ void APathfindingPawn::TriggerClick()
 {
 	if (CurrentBlockFocus)
 	{
-		CurrentBlockFocus->HandleClicked();
+		CurrentBlockFocus->HandleClicked("Trigger");
 	}
 }
 
@@ -78,7 +81,7 @@ void APathfindingPawn::SetStart()
 	if (CurrentBlockFocus)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Set Start"));
-		CurrentBlockFocus->HandleClicked();
+		CurrentBlockFocus->HandleClicked("Start");
 	}
 }
 
@@ -90,17 +93,38 @@ void APathfindingPawn::SetEnd()
 	if (CurrentBlockFocus)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Set End"));
-		CurrentBlockFocus->HandleClicked();
+		CurrentBlockFocus->HandleClicked("End");
 	}
 }
 
 void APathfindingPawn::SetWall()
 {
+	bLeftMouseHeld = true;
 	if (CurrentBlockFocus)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Set Wall"));
-		CurrentBlockFocus->HandleClicked();
+		CurrentBlockFocus->HandleClicked("Wall");
 	}
+}
+
+void APathfindingPawn::ReleaseWall()
+{
+	bLeftMouseHeld = false;
+}
+
+void APathfindingPawn::ResetBlock()
+{
+	bRightMouseHeld = true;
+	if (CurrentBlockFocus)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Reset Wall"));
+		CurrentBlockFocus->HandleClicked("Reset");
+	}
+}
+
+void APathfindingPawn::ReleaseReset()
+{
+	bRightMouseHeld = false;
 }
 
 void APathfindingPawn::TraceForBlock(const FVector& Start, const FVector& End, bool bDrawDebugHelpers)
@@ -117,10 +141,20 @@ void APathfindingPawn::TraceForBlock(const FVector& Start, const FVector& End, b
 		APathfindingBlock* HitBlock = Cast<APathfindingBlock>(HitResult.Actor.Get());
 		if (CurrentBlockFocus != HitBlock)
 		{
+			if (bLeftMouseHeld)
+			{
+				SetWall();
+			}
+			else if (bRightMouseHeld)
+			{
+				ResetBlock();
+			}
+
 			if (CurrentBlockFocus)
 			{
 				CurrentBlockFocus->Highlight(false);
 			}
+
 			if (HitBlock)
 			{
 				HitBlock->Highlight(true);
@@ -130,6 +164,7 @@ void APathfindingPawn::TraceForBlock(const FVector& Start, const FVector& End, b
 	}
 	else if (CurrentBlockFocus)
 	{
+		UE_LOG(LogTemp, Warning, TEXT("CurrentBlockFocus = %s"), CurrentBlockFocus);
 		CurrentBlockFocus->Highlight(false);
 		CurrentBlockFocus = nullptr;
 	}

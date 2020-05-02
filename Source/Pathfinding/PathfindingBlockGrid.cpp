@@ -21,8 +21,8 @@ APathfindingBlockGrid::APathfindingBlockGrid()
 	ScoreText->SetupAttachment(DummyRoot);
 
 	// Set defaults
-	Size = 10;
-	BlockSpacing = 150.f;
+	Size = 25;
+	BlockSpacing = 75.f;
 }
 
 

@@ -89,6 +89,7 @@ void APathfindingBlock::HandleClicked(FString HighlightType)
 		else if (HighlightType == "Start")
 		{
 			BlockMesh->SetMaterial(0, StartMaterial);
+			Distance = 0;
 			bIsStart = true;
 		}
 		else if (HighlightType == "End")
@@ -112,6 +113,7 @@ void APathfindingBlock::HandleClicked(FString HighlightType)
 		bIsWall = false;
 		bIsStart = false;
 		bIsEnd = false;
+		Distance = 999;
 		}
 	}
 }

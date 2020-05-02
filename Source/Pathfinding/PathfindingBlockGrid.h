@@ -45,12 +45,20 @@ public:
 	/** Handle the block being clicked */
 	void AddScore();
 
+	UFUNCTION(BlueprintCallable)
+	void DijkstraAlgorithm();
+
+	UFUNCTION(BlueprintCallable)
+	void SortBlocksByDistance(TArray<APathfindingBlock*> UnvisitedArray, int LeftIndex, int RightIndex);
+
+	void Swap(APathfindingBlock* a, APathfindingBlock* b);
+
 	/** Returns DummyRoot subobject **/
 	FORCEINLINE class USceneComponent* GetDummyRoot() const { return DummyRoot; }
 	/** Returns ScoreText subobject **/
 	FORCEINLINE class UTextRenderComponent* GetScoreText() const { return ScoreText; }
 
-	UPROPERTY(BlueprintReadOnly)
+	UPROPERTY(BlueprintReadWrite)
 	TArray<APathfindingBlock*> BlockArray;
 };
 

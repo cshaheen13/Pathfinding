@@ -73,13 +73,26 @@ void APathfindingBlockGrid::DijkstraAlgorithm()
 		BlockArray = SortBlocksByDistance(BlockArray, 0, BlockArray.Num() - 1);
 		//Set 1st element to visited
 		BlockArray[0]->bVisited = true;
-		//Remove 1st element (should be closest node)
-		BlockArray.RemoveAt(0);
-		//Push visited node to VisitedNodesInOrder Array
+
+		//Push neighbor nodes (line trace or distinct edge cases) to NeighborArray
+		TArray <APathfindingBlock*> NeighborsHitArray;
+		FHitResult NeighborsHit;
+		for (int dir = 1; dir <= 4; dir++)
+		{
+			//FVector Start = BlockArray[0]->GetActorLocation();
+			//FVector End = 
+			//GetWorld()->LineTraceSingleByChannel(NeighborsHit, Start, End, ECC_Visibility);
+
+		}
+
+
+		//Push visited node (element 0) to VisitedNodesInOrder Array and Remove if from the BlockArray
+		VisitedNodesInOrder.Add(BlockArray.Pop(0));
 
 		//If 1st element->bIsEnd then return VisitedNodesInOrder
+		if (VisitedNodesInOrder.Last()->bIsEnd == true) return; //VisitedNodesInOrder;
 
-		//Push neighbor nodes (line trace?) to NeighborArray
+
 	}
 
 	for (int32 Index = 0; Index != BlockArray.Num(); ++Index)
@@ -103,7 +116,6 @@ TArray<APathfindingBlock*> APathfindingBlockGrid::SortBlocksByDistance(TArray<AP
 	for (int i = LeftIndex + 1; i <= RightIndex; i++)
 	{
 		int temp = UnvisitedArray[i]->Distance;
-		APathfindingBlock* tempObj = UnvisitedArray[i];
 		int j = i - 1;
 		while (j >= LeftIndex && UnvisitedArray[j]->Distance > temp)
 		{

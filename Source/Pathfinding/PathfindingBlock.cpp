@@ -20,6 +20,7 @@ APathfindingBlock::APathfindingBlock()
 		ConstructorHelpers::FObjectFinderOptional<UMaterialInstance> WallMaterial;
 		ConstructorHelpers::FObjectFinderOptional<UMaterialInstance> StartMaterial;
 		ConstructorHelpers::FObjectFinderOptional<UMaterialInstance> EndMaterial;
+		ConstructorHelpers::FObjectFinderOptional<UMaterialInstance> PathMaterial;
 		FConstructorStatics()
 			: PlaneMesh(TEXT("/Game/Puzzle/Meshes/PuzzleCube.PuzzleCube"))
 			, BaseMaterial(TEXT("/Game/Puzzle/Meshes/BaseMaterial.BaseMaterial"))
@@ -27,6 +28,7 @@ APathfindingBlock::APathfindingBlock()
 			, WallMaterial(TEXT("/Game/Puzzle/Meshes/WallMaterial.WallMaterial"))
 			, StartMaterial(TEXT("/Game/Puzzle/Meshes/GoldMaterial.GoldMaterial"))
 			, EndMaterial(TEXT("/Game/Puzzle/Meshes/M_Tech_Hex_Tile_Pulse_Inst.M_Tech_Hex_Tile_Pulse_Inst"))
+			, PathMaterial(TEXT("/Game/Puzzle/Meshes/PathMaterial.PathMaterial"))
 		{
 		}
 	};
@@ -40,7 +42,7 @@ APathfindingBlock::APathfindingBlock()
 	BlockMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("BlockMesh0"));
 	BlockMesh->SetStaticMesh(ConstructorStatics.PlaneMesh.Get());
 	BlockMesh->SetRelativeScale3D(FVector(0.25f,0.25f,1.0f));
-	BlockMesh->SetRelativeLocation(FVector(0.f,0.f,25.f));
+	BlockMesh->SetRelativeLocation(FVector(0.f,0.f,0.f));
 	BlockMesh->SetMaterial(0, ConstructorStatics.BlueMaterial.Get());
 	BlockMesh->SetupAttachment(DummyRoot);
 	BlockMesh->OnClicked.AddDynamic(this, &APathfindingBlock::BlockClicked);
@@ -52,6 +54,7 @@ APathfindingBlock::APathfindingBlock()
 	WallMaterial = ConstructorStatics.WallMaterial.Get();
 	StartMaterial = ConstructorStatics.StartMaterial.Get();
 	EndMaterial = ConstructorStatics.EndMaterial.Get();
+	PathMaterial = ConstructorStatics.PathMaterial.Get();
 
 	Distance = 999;
 	bVisited = false;
@@ -97,6 +100,11 @@ void APathfindingBlock::HandleClicked(FString HighlightType)
 			BlockMesh->SetMaterial(0, EndMaterial);
 			bIsEnd = true;
 		}
+		else if (HighlightType == "Path")
+		{
+			BlockMesh->SetMaterial(0, PathMaterial);
+		}
+
 		// Tell the Grid
 		if (OwningGrid != nullptr)
 		{
@@ -126,12 +134,12 @@ void APathfindingBlock::Highlight(bool bOn)
 		return;
 	}
 
-	//if (bOn)
-	//{
-	//	BlockMesh->SetMaterial(0, BaseMaterial);
-	//}
-	//else
-	//{
-	//	BlockMesh->SetMaterial(0, BlueMaterial);
-	//}
+	if (bOn)
+	{
+		BlockMesh->SetMaterial(0, BaseMaterial);
+	}
+	else
+	{
+		BlockMesh->SetMaterial(0, BlueMaterial);
+	}
 }

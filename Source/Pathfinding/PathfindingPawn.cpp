@@ -152,12 +152,12 @@ void APathfindingPawn::TraceForBlock(const FVector& Start, const FVector& End, b
 
 			if (CurrentBlockFocus)
 			{
-				CurrentBlockFocus->Highlight(false);
+				//CurrentBlockFocus->Highlight(false);
 			}
 
 			if (HitBlock)
 			{
-				HitBlock->Highlight(true);
+				//HitBlock->Highlight(true);
 			}
 			CurrentBlockFocus = HitBlock;
 		}

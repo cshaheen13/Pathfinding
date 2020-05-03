@@ -61,6 +61,10 @@ public:
 	UPROPERTY()
 	class UMaterialInstance* EndMaterial;
 
+	/** Pointer to orange material used on the end block */
+	UPROPERTY()
+	class UMaterialInstance* PathMaterial;
+
 	/** Grid that owns us */
 	UPROPERTY()
 	class APathfindingBlockGrid* OwningGrid;

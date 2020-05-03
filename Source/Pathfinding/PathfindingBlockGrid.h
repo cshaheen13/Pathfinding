@@ -46,7 +46,7 @@ public:
 	void AddScore();
 
 	UFUNCTION(BlueprintCallable)
-	void DijkstraAlgorithm();
+	TArray<APathfindingBlock*> DijkstraAlgorithm();
 
 	UFUNCTION(BlueprintCallable)
 	TArray<APathfindingBlock*> SortBlocksByDistance(TArray<APathfindingBlock*> UnvisitedArray, int LeftIndex, int RightIndex);
@@ -58,6 +58,11 @@ public:
 
 	UPROPERTY(BlueprintReadWrite)
 	TArray<APathfindingBlock*> BlockArray;
+
+	UFUNCTION(BlueprintCallable)
+	void GetShortestPath(TArray<APathfindingBlock*> VisitedNodes);
+
+	FTimerHandle MemberTimerHandle;
 };
 
 

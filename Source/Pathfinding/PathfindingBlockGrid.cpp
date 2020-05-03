@@ -4,6 +4,9 @@
 #include "PathfindingBlock.h"
 #include "Components/TextRenderComponent.h"
 #include "Engine/World.h"
+#include "DrawDebugHelpers.h"
+#include "GameFramework/Actor.h"
+#include "TimerManager.h"
 
 #define LOCTEXT_NAMESPACE "PuzzleBlockGrid"
 
@@ -64,7 +67,7 @@ void APathfindingBlockGrid::AddScore()
 	ScoreText->SetText(FText::Format(LOCTEXT("ScoreFmt", "Score: {0}"), FText::AsNumber(Score)));
 }
 
-void APathfindingBlockGrid::DijkstraAlgorithm()
+TArray<APathfindingBlock*> APathfindingBlockGrid::DijkstraAlgorithm()
 {
 	TArray <APathfindingBlock*> VisitedNodesInOrder;
 	while (BlockArray.Num() != 0)
@@ -74,41 +77,64 @@ void APathfindingBlockGrid::DijkstraAlgorithm()
 		//Set 1st element to visited
 		BlockArray[0]->bVisited = true;
 
-		//Push neighbor nodes (line trace or distinct edge cases) to NeighborArray
+		//Push neighbor nodes (line trace) to NeighborArray
 		TArray <APathfindingBlock*> NeighborsHitArray;
-		FHitResult NeighborsHit;
+		FHitResult NeighborHit;
+
+		FVector Start = BlockArray[0]->GetActorLocation();
+		FVector EndN = Start + FVector(75, 0, 0);
+		FVector EndS = Start + FVector(-75, 0, 0);
+		FVector EndW = Start + FVector(0, -75, 0);
+		FVector EndE = Start + FVector(0, 75, 0);
+		FVector End;
+
 		for (int dir = 1; dir <= 4; dir++)
 		{
-			//FVector Start = BlockArray[0]->GetActorLocation();
-			//FVector End = 
-			//GetWorld()->LineTraceSingleByChannel(NeighborsHit, Start, End, ECC_Visibility);
+			if (dir == 1) 
+			{
+				End = EndN;
+			}
+			else if (dir == 2)
+			{
+				End = EndS;
+			}
+			else if (dir == 3)
+			{
+				End = EndW;
+			}
+			else if (dir == 4)
+			{
+				End = EndE;
+			}
 
+			GetWorld()->LineTraceSingleByChannel(NeighborHit, Start, End, ECC_Visibility);
+			DrawDebugLine(GetWorld(), Start, End, FColor::Red, true, 30, 0, 3);
+
+			APathfindingBlock* NeighborFound = Cast<APathfindingBlock>(NeighborHit.GetActor());
+			if (NeighborFound && !NeighborFound->bIsWall && !NeighborFound->bVisited)
+			{
+				UE_LOG(LogTemp, Warning, TEXT("Added Non-Wall Neighbor to Array"));
+				NeighborsHitArray.Add(NeighborFound);
+				NeighborFound->Highlight(true);
+				if ((BlockArray[0]->Distance + 1) < NeighborFound->Distance)
+				{
+					NeighborFound->Distance = 1 + BlockArray[0]->Distance;
+				}
+			}
 		}
 
-
 		//Push visited node (element 0) to VisitedNodesInOrder Array and Remove if from the BlockArray
-		VisitedNodesInOrder.Add(BlockArray.Pop(0));
+		VisitedNodesInOrder.Add(BlockArray[0]);
+		BlockArray.RemoveAt(0);
 
 		//If 1st element->bIsEnd then return VisitedNodesInOrder
-		if (VisitedNodesInOrder.Last()->bIsEnd == true) return; //VisitedNodesInOrder;
-
-
+		if (VisitedNodesInOrder.Last()->bIsEnd == true)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Found End at %s"), *VisitedNodesInOrder.Last()->GetName());
+			return VisitedNodesInOrder;
+		}
 	}
-
-	for (int32 Index = 0; Index != BlockArray.Num(); ++Index)
-	{
-		//FString test = BlockArray[Index]->GetName();
-		//UE_LOG(LogTemp, Warning, TEXT("Test = %s"), *test);
-		int testDistance = BlockArray[Index]->Distance;
-		UE_LOG(LogTemp, Warning, TEXT("Test = %i"), testDistance);
-	}
-
-	for (int32 Index = 0; Index != BlockArray.Num(); ++Index)
-	{
-		FString test = BlockArray[Index]->GetName();
-		UE_LOG(LogTemp, Warning, TEXT("Name = %s"), *test);
-	}
-
+	return VisitedNodesInOrder;
 }
 
 TArray<APathfindingBlock*> APathfindingBlockGrid::SortBlocksByDistance(TArray<APathfindingBlock*> UnvisitedArray, int LeftIndex, int RightIndex)
@@ -120,14 +146,23 @@ TArray<APathfindingBlock*> APathfindingBlockGrid::SortBlocksByDistance(TArray<AP
 		while (j >= LeftIndex && UnvisitedArray[j]->Distance > temp)
 		{
 			//UnvisitedArray[j + 1] = UnvisitedArray[j];
-			UE_LOG(LogTemp, Warning, TEXT("Swapping %s"), *UnvisitedArray[j+1]->GetName());
-			UE_LOG(LogTemp, Warning, TEXT("with %s"), *UnvisitedArray[j]->GetName());
+			//UE_LOG(LogTemp, Warning, TEXT("Swapping %s"), *UnvisitedArray[j+1]->GetName());
+			//UE_LOG(LogTemp, Warning, TEXT("with %s"), *UnvisitedArray[j]->GetName());
 			UnvisitedArray.Swap(j + 1, j);
 			j--;
 		}
 	}
 
 	return UnvisitedArray;
+}
+
+void APathfindingBlockGrid::GetShortestPath(TArray<APathfindingBlock*> VisitedNodes)
+{
+	APathfindingBlock* EndNode = VisitedNodes.Last();
+	for (int i = VisitedNodes.Num() - 1; i >= 0; i--)
+	{
+		int dist = VisitedNodes[i]->Distance;
+	}
 }
 
 #undef LOCTEXT_NAMESPACE

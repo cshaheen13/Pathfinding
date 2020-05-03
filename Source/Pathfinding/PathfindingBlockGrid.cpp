@@ -108,12 +108,11 @@ TArray<APathfindingBlock*> APathfindingBlockGrid::DijkstraAlgorithm()
 			}
 
 			GetWorld()->LineTraceSingleByChannel(NeighborHit, Start, End, ECC_Visibility);
-			DrawDebugLine(GetWorld(), Start, End, FColor::Red, true, 30, 0, 3);
+			//DrawDebugLine(GetWorld(), Start, End, FColor::Red, false, 1, 0, 3);
 
 			APathfindingBlock* NeighborFound = Cast<APathfindingBlock>(NeighborHit.GetActor());
 			if (NeighborFound && !NeighborFound->bIsWall && !NeighborFound->bVisited)
 			{
-				UE_LOG(LogTemp, Warning, TEXT("Added Non-Wall Neighbor to Array"));
 				NeighborsHitArray.Add(NeighborFound);
 				NeighborFound->Highlight(true);
 				if ((BlockArray[0]->Distance + 1) < NeighborFound->Distance)
@@ -158,10 +157,51 @@ TArray<APathfindingBlock*> APathfindingBlockGrid::SortBlocksByDistance(TArray<AP
 
 void APathfindingBlockGrid::GetShortestPath(TArray<APathfindingBlock*> VisitedNodes)
 {
+	//Traverse backwards through the visited nodes
 	APathfindingBlock* EndNode = VisitedNodes.Last();
-	for (int i = VisitedNodes.Num() - 1; i >= 0; i--)
+	while (!EndNode->bIsStart)
 	{
-		int dist = VisitedNodes[i]->Distance;
+		//Check if the node is a neighbor and the distance = currentDistance - 1
+		int dist = EndNode->Distance;
+
+		FHitResult NeighborHit;
+
+		FVector Start = EndNode->GetActorLocation();
+		FVector EndN = Start + FVector(75, 0, 0);
+		FVector EndS = Start + FVector(-75, 0, 0);
+		FVector EndW = Start + FVector(0, -75, 0);
+		FVector EndE = Start + FVector(0, 75, 0);
+		FVector End;
+
+		for (int dir = 1; dir <= 4; dir++)
+		{
+			if (dir == 1)
+			{
+				End = EndN;
+			}
+			else if (dir == 2)
+			{
+				End = EndS;
+			}
+			else if (dir == 3)
+			{
+				End = EndW;
+			}
+			else if (dir == 4)
+			{
+				End = EndE;
+			}
+
+			GetWorld()->LineTraceSingleByChannel(NeighborHit, Start, End, ECC_Visibility);
+			DrawDebugLine(GetWorld(), Start, End, FColor::Red, false, 10, 0, 3);
+
+			APathfindingBlock* NeighborFound = Cast<APathfindingBlock>(NeighborHit.GetActor());
+			if (NeighborFound && (NeighborFound->Distance == EndNode->Distance - 1))
+			{
+				NeighborFound->HandleClicked("Path");
+				EndNode = NeighborFound;
+			}
+		}
 	}
 }
 

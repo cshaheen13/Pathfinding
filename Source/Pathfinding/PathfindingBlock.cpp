@@ -66,7 +66,6 @@ APathfindingBlock::APathfindingBlock()
 void APathfindingBlock::BlockClicked(UPrimitiveComponent* ClickedComp, FKey ButtonClicked)
 {
 	FString Button = ButtonClicked.ToString();
-	UE_LOG(LogTemp, Warning, TEXT("Key Pressed = %s"), *Button);
 	HandleClicked("Wall");
 }
 
@@ -116,7 +115,6 @@ void APathfindingBlock::HandleClicked(FString HighlightType)
 		if (HighlightType == "Reset")
 		{
 		BlockMesh->SetMaterial(0, BlueMaterial);
-		UE_LOG(LogTemp, Warning, TEXT("Reset Wall In PathfindingBlock"));
 		bIsActive = false;
 		bIsWall = false;
 		bIsStart = false;

@@ -62,9 +62,6 @@ void APathfindingBlockGrid::AddScore()
 {
 	// Increment score
 	Score++;
-
-	// Update text
-	ScoreText->SetText(FText::Format(LOCTEXT("ScoreFmt", "Score: {0}"), FText::AsNumber(Score)));
 }
 
 TArray<APathfindingBlock*> APathfindingBlockGrid::DijkstraAlgorithm()
@@ -76,6 +73,12 @@ TArray<APathfindingBlock*> APathfindingBlockGrid::DijkstraAlgorithm()
 		BlockArray = SortBlocksByDistance(BlockArray, 0, BlockArray.Num() - 1);
 		//Set 1st element to visited
 		BlockArray[0]->bVisited = true;
+
+		if (BlockArray[0]->Distance == 999) 
+		{ 
+			UE_LOG(LogTemp, Warning, TEXT("Blocked Path"));
+			return VisitedNodesInOrder;
+		}
 
 		//Push neighbor nodes (line trace) to NeighborArray
 		TArray <APathfindingBlock*> NeighborsHitArray;
@@ -108,7 +111,6 @@ TArray<APathfindingBlock*> APathfindingBlockGrid::DijkstraAlgorithm()
 			}
 
 			GetWorld()->LineTraceSingleByChannel(NeighborHit, Start, End, ECC_Visibility);
-			//DrawDebugLine(GetWorld(), Start, End, FColor::Red, false, 1, 0, 3);
 
 			APathfindingBlock* NeighborFound = Cast<APathfindingBlock>(NeighborHit.GetActor());
 			if (NeighborFound && !NeighborFound->bIsWall && !NeighborFound->bVisited)
@@ -144,9 +146,6 @@ TArray<APathfindingBlock*> APathfindingBlockGrid::SortBlocksByDistance(TArray<AP
 		int j = i - 1;
 		while (j >= LeftIndex && UnvisitedArray[j]->Distance > temp)
 		{
-			//UnvisitedArray[j + 1] = UnvisitedArray[j];
-			//UE_LOG(LogTemp, Warning, TEXT("Swapping %s"), *UnvisitedArray[j+1]->GetName());
-			//UE_LOG(LogTemp, Warning, TEXT("with %s"), *UnvisitedArray[j]->GetName());
 			UnvisitedArray.Swap(j + 1, j);
 			j--;
 		}
@@ -193,7 +192,6 @@ void APathfindingBlockGrid::GetShortestPath(TArray<APathfindingBlock*> VisitedNo
 			}
 
 			GetWorld()->LineTraceSingleByChannel(NeighborHit, Start, End, ECC_Visibility);
-			DrawDebugLine(GetWorld(), Start, End, FColor::Red, false, 10, 0, 3);
 
 			APathfindingBlock* NeighborFound = Cast<APathfindingBlock>(NeighborHit.GetActor());
 			if (NeighborFound && (NeighborFound->Distance == EndNode->Distance - 1))

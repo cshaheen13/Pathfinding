@@ -80,7 +80,6 @@ void APathfindingPawn::SetStart()
 	//Highlight start with a specific color (gold)
 	if (CurrentBlockFocus)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Set Start"));
 		CurrentBlockFocus->HandleClicked("Start");
 	}
 }
@@ -92,7 +91,6 @@ void APathfindingPawn::SetEnd()
 	//Highlight end with a specific color (purple)
 	if (CurrentBlockFocus)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Set End"));
 		CurrentBlockFocus->HandleClicked("End");
 	}
 }
@@ -102,7 +100,6 @@ void APathfindingPawn::SetWall()
 	bLeftMouseHeld = true;
 	if (CurrentBlockFocus)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Set Wall"));
 		CurrentBlockFocus->HandleClicked("Wall");
 	}
 }
@@ -117,7 +114,6 @@ void APathfindingPawn::ResetBlock()
 	bRightMouseHeld = true;
 	if (CurrentBlockFocus)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Reset Wall"));
 		CurrentBlockFocus->HandleClicked("Reset");
 	}
 }
@@ -164,7 +160,6 @@ void APathfindingPawn::TraceForBlock(const FVector& Start, const FVector& End, b
 	}
 	else if (CurrentBlockFocus)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("CurrentBlockFocus = %s"), CurrentBlockFocus);
 		CurrentBlockFocus->Highlight(false);
 		CurrentBlockFocus = nullptr;
 	}

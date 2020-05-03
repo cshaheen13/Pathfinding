@@ -2,7 +2,6 @@
 > An Unreal Engine 4 application that simulates pathfinding on a grid utilizing Dijkstra's Algorithm.
 
 ![Dijkstras Example](DijkstrasExampleImage.PNG)
-Format: ![Alt Text](url))
 
 ## To-Do
 - Update material change delay to better visualize the algorithm
@@ -13,6 +12,7 @@ Format: ![Alt Text](url))
 - Requires Unreal Engine 4
 
 ## Contact
-#### Reach out to me at:
-- https://cshaheen13.wixsite.com/chaseshaheen
+#### Reach Out or Learn More About Me at:
 - cshaheen13@gmail.com
+- https://cshaheen13.wixsite.com/chaseshaheen
+

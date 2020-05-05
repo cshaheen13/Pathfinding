@@ -35,6 +35,9 @@ public:
 	UPROPERTY(Category=Grid, EditAnywhere, BlueprintReadOnly)
 	float BlockSpacing;
 
+	UPROPERTY(BlueprintReadWrite)
+	bool bDone;
+
 protected:
 	// Begin AActor interface
 	virtual void BeginPlay() override;
@@ -46,7 +49,7 @@ public:
 	void AddScore();
 
 	UFUNCTION(BlueprintCallable)
-	TArray<APathfindingBlock*> DijkstraAlgorithm();
+	TArray<APathfindingBlock*> DijkstraAlgorithm(TArray<APathfindingBlock*> Array);
 
 	UFUNCTION(BlueprintCallable)
 	TArray<APathfindingBlock*> SortBlocksByDistance(TArray<APathfindingBlock*> UnvisitedArray, int LeftIndex, int RightIndex);

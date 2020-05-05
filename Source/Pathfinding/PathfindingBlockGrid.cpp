@@ -26,6 +26,7 @@ APathfindingBlockGrid::APathfindingBlockGrid()
 	// Set defaults
 	Size = 25;
 	BlockSpacing = 75.f;
+	bDone = false;
 }
 
 
@@ -64,7 +65,7 @@ void APathfindingBlockGrid::AddScore()
 	Score++;
 }
 
-TArray<APathfindingBlock*> APathfindingBlockGrid::DijkstraAlgorithm()
+TArray<APathfindingBlock*> APathfindingBlockGrid::DijkstraAlgorithm(TArray<APathfindingBlock*> Array)
 {
 	TArray <APathfindingBlock*> VisitedNodesInOrder;
 	while (BlockArray.Num() != 0)
@@ -77,6 +78,7 @@ TArray<APathfindingBlock*> APathfindingBlockGrid::DijkstraAlgorithm()
 		if (BlockArray[0]->Distance == 999) 
 		{ 
 			UE_LOG(LogTemp, Warning, TEXT("Blocked Path"));
+			bDone = true;
 			return VisitedNodesInOrder;
 		}
 
@@ -132,6 +134,7 @@ TArray<APathfindingBlock*> APathfindingBlockGrid::DijkstraAlgorithm()
 		if (VisitedNodesInOrder.Last()->bIsEnd == true)
 		{
 			UE_LOG(LogTemp, Warning, TEXT("Found End at %s"), *VisitedNodesInOrder.Last()->GetName());
+			bDone = true;
 			return VisitedNodesInOrder;
 		}
 	}

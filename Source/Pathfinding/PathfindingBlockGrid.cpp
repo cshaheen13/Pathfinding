@@ -206,4 +206,81 @@ void APathfindingBlockGrid::GetShortestPath(TArray<APathfindingBlock*> VisitedNo
 	}
 }
 
+void APathfindingBlockGrid::HighlightBlock(TArray<APathfindingBlock*> VisitedNodes)
+{
+	APathfindingBlock* BlockFound = Cast<APathfindingBlock>(VisitedNodes[0]);
+	if (BlockFound)
+	{
+		BlockFound->Highlight(true);
+		UE_LOG(LogTemp, Warning, TEXT("Block Highlight"));
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("No Block To Highlight"));
+	}
+}
+
+void APathfindingBlockGrid::MazeGenerator()
+{
+	int row = 1;
+
+	for (int i = 0; i < BlockArray.Num(); i++)
+	{
+		//Reached end column
+		if ((i % 25 == 0) && (i != 0))
+		{
+			row++;
+		}
+		////Check Neighbors to set maze walls
+		//FHitResult NeighborHit;
+
+		//FVector Start = BlockArray[i]->GetActorLocation();
+		//FVector EndN = Start + FVector(75, 0, 0);
+		//FVector EndS = Start + FVector(-75, 0, 0);
+		//FVector EndW = Start + FVector(0, -75, 0);
+		//FVector EndE = Start + FVector(0, 75, 0);
+		//FVector End;
+
+		//for (int dir = 1; dir <= 4; dir++)
+		//{
+		//	if (dir == 1)
+		//	{
+		//		End = EndN;
+		//	}
+		//	else if (dir == 2)
+		//	{
+		//		End = EndS;
+		//	}
+		//	else if (dir == 3)
+		//	{
+		//		End = EndW;
+		//	}
+		//	else if (dir == 4)
+		//	{
+		//		End = EndE;
+		//	}
+
+		//	GetWorld()->LineTraceSingleByChannel(NeighborHit, Start, End, ECC_Visibility);
+
+		//	APathfindingBlock* NeighborFound = Cast<APathfindingBlock>(NeighborHit.GetActor());
+		//	if(!NeighborFound)
+		//	{
+		//		BlockArray[i]->HandleClicked("Wall");
+		//		break;
+		//	}
+
+		//Odd rows
+		if (row % 2 != 0) {
+			BlockArray[i]->HandleClicked("Wall");
+		}
+		else
+		{
+			if (i % 2 != 0)
+			{
+				BlockArray[i]->HandleClicked("Wall");
+			}
+		}
+	}
+}
+
 #undef LOCTEXT_NAMESPACE

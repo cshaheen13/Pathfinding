@@ -65,7 +65,12 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void GetShortestPath(TArray<APathfindingBlock*> VisitedNodes);
 
-	FTimerHandle MemberTimerHandle;
+	UFUNCTION(BlueprintCallable)
+	void HighlightBlock(TArray<APathfindingBlock*> VisitedNodes);
+
+	UFUNCTION(BlueprintCallable)
+	void MazeGenerator();
+
 };
 
 

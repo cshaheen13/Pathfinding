@@ -2,10 +2,13 @@
 > An Unreal Engine 4 application that can procedurally generate a maze and simulate pathfinding on a grid utilizing Dijkstra's Algorithm. 
 
 > Gold = Start | Hex = End | Black = Wall | White = Visited for Pathfinding | Blue = Unvisited for Pathfinding | Red = Shortest Path
+
 > M = Generate Maze | Q = Set Start Point | E = Set End Point | Left Click = Set Wall | Right Click = Reset Block
+
 ![Dijkstras Example](DijkstrasExampleImage.PNG)
 
 > Maze generation is procedural, based on recursive backtracking.
+
 ![Maze Example](ProceduralMazeGenerationAndPathfinding.PNG)
 
 ## To-Do

@@ -220,10 +220,12 @@ void APathfindingBlockGrid::HighlightBlock(TArray<APathfindingBlock*> VisitedNod
 	}
 }
 
-void APathfindingBlockGrid::MazeGenerator()
+TArray<APathfindingBlock*> APathfindingBlockGrid::CreateMazeGrid()
 {
 	int row = 1;
+	int MazeIndexCount = 0;
 
+	//Generate Grid
 	for (int i = 0; i < BlockArray.Num(); i++)
 	{
 		//Reached end column
@@ -231,53 +233,92 @@ void APathfindingBlockGrid::MazeGenerator()
 		{
 			row++;
 		}
-		////Check Neighbors to set maze walls
-		//FHitResult NeighborHit;
-
-		//FVector Start = BlockArray[i]->GetActorLocation();
-		//FVector EndN = Start + FVector(75, 0, 0);
-		//FVector EndS = Start + FVector(-75, 0, 0);
-		//FVector EndW = Start + FVector(0, -75, 0);
-		//FVector EndE = Start + FVector(0, 75, 0);
-		//FVector End;
-
-		//for (int dir = 1; dir <= 4; dir++)
-		//{
-		//	if (dir == 1)
-		//	{
-		//		End = EndN;
-		//	}
-		//	else if (dir == 2)
-		//	{
-		//		End = EndS;
-		//	}
-		//	else if (dir == 3)
-		//	{
-		//		End = EndW;
-		//	}
-		//	else if (dir == 4)
-		//	{
-		//		End = EndE;
-		//	}
-
-		//	GetWorld()->LineTraceSingleByChannel(NeighborHit, Start, End, ECC_Visibility);
-
-		//	APathfindingBlock* NeighborFound = Cast<APathfindingBlock>(NeighborHit.GetActor());
-		//	if(!NeighborFound)
-		//	{
-		//		BlockArray[i]->HandleClicked("Wall");
-		//		break;
-		//	}
-
-		//Odd rows
+		//Wall off all odd rows
 		if (row % 2 != 0) {
 			BlockArray[i]->HandleClicked("Wall");
 		}
+		//Wall  off every other block of even rows
 		else
 		{
 			if (i % 2 != 0)
 			{
 				BlockArray[i]->HandleClicked("Wall");
+			}
+		}
+
+		if ((i < 25) || (i > 599) || (i % 25 == 0) || (i % 25 == 24))
+		{
+			BlockArray[i]->bIsEdgeWall = true;
+		}
+
+		if ((i >= 25) && (i <= 599) && (i % 25 != 0) && (i % 25 != 24) && (!BlockArray[i]->bIsWall))
+		{
+			MazeGridArray.Add(BlockArray[i]);
+			BlockArray[i]->MazeIndex = MazeIndexCount;
+			MazeIndexCount++;
+			UE_LOG(LogTemp, Warning, TEXT("MazeBlock: %s"), *BlockArray[i]->GetName());
+		}
+	}
+
+	return MazeGridArray;
+}
+
+void APathfindingBlockGrid::MazeGenerator(TArray<APathfindingBlock*> GridArray, int Index, TArray<APathfindingBlock*> VisitedArray)
+{
+	TArray<APathfindingBlock*> VisitedArr = VisitedArray;
+	TArray<APathfindingBlock*> GridArr = GridArray;
+
+	//UE_LOG(LogTemp, Warning, TEXT("T INDEX: %i"), Index);
+	VisitedArr.Add(GridArr[Index]);
+
+	GridArr[Index]->bMazeVisited = true;
+
+	//Check Neighbors to set maze walls
+	FHitResult NeighborHit;
+	FHitResult WallBetween;
+	FVector End;
+	FVector EndWall;
+
+	int Direction;
+	int DirectionCount = 0;
+
+	FVector Start = GridArr[Index]->GetActorLocation();
+
+	TArray<FVector> DirectionArray;
+	DirectionArray.Add(FVector(150, 0, 0));
+	DirectionArray.Add(FVector(-150, 0, 0));
+	DirectionArray.Add(FVector(0, -150, 0));
+	DirectionArray.Add(FVector(0, 150, 0));
+
+	//Shuffle directions
+	for (int i = 0; i <= 25; i++)
+	{
+		Direction = FMath::RandRange(0, 3);
+		DirectionArray.Swap(0, Direction);
+	}
+
+	for (auto& Dir : DirectionArray)
+	{
+		End = Start + Dir;
+		DirectionCount++;
+
+		//Line Trace to block (non wall)
+		FVector NS = End - FVector(0, 0, 10);
+		GetWorld()->LineTraceSingleByChannel(NeighborHit, Start, End, ECC_GameTraceChannel4);
+
+		APathfindingBlock* NeighborFound = Cast<APathfindingBlock>(NeighborHit.GetActor());
+		if ((NeighborFound) && (NeighborFound->bIsEdgeWall == false) && (NeighborFound->bMazeVisited == false) && (NeighborFound->MazeIndex != 0))
+		{
+
+			//Get the wall in between two open neighbors and reset it
+			EndWall = Start + (Dir / 2);
+			GetWorld()->LineTraceSingleByChannel(WallBetween, Start, EndWall, ECC_Visibility);
+
+			APathfindingBlock* WallFound = Cast<APathfindingBlock>(WallBetween.GetActor());
+			if (WallFound)
+			{
+				WallFound->HandleClicked("Reset");
+				MazeGenerator(GridArray, NeighborFound->MazeIndex, VisitedArr);
 			}
 		}
 	}

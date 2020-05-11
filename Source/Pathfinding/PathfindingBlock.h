@@ -41,6 +41,15 @@ public:
 	UPROPERTY(Category = Algorithm, VisibleAnywhere, BlueprintReadOnly)
 	bool bIsEnd;
 
+	UPROPERTY(Category = Algorithm, VisibleAnywhere, BlueprintReadOnly)
+	bool bIsEdgeWall;
+
+	UPROPERTY(Category = Algorithm, VisibleAnywhere, BlueprintReadOnly)
+	bool bMazeVisited;
+
+	UPROPERTY(Category = Algorithm, VisibleAnywhere, BlueprintReadOnly)
+	int MazeIndex;
+
 	/** Pointer to white material used on the focused block */
 	UPROPERTY()
 	class UMaterial* BaseMaterial;

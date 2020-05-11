@@ -47,6 +47,7 @@ APathfindingBlock::APathfindingBlock()
 	BlockMesh->SetupAttachment(DummyRoot);
 	BlockMesh->OnClicked.AddDynamic(this, &APathfindingBlock::BlockClicked);
 	BlockMesh->OnInputTouchBegin.AddDynamic(this, &APathfindingBlock::OnFingerPressedBlock);
+	BlockMesh->SetCollisionResponseToChannel(ECC_GameTraceChannel4, ECR_Block);
 
 	// Save a pointer to the orange material
 	BaseMaterial = ConstructorStatics.BaseMaterial.Get();
@@ -61,6 +62,8 @@ APathfindingBlock::APathfindingBlock()
 	bIsWall = false;
 	bIsStart = false;
 	bIsEnd = false;
+	bIsEdgeWall = false;
+	bMazeVisited = false;
 }
 
 void APathfindingBlock::BlockClicked(UPrimitiveComponent* ClickedComp, FKey ButtonClicked)
@@ -86,6 +89,7 @@ void APathfindingBlock::HandleClicked(FString HighlightType)
 		if (HighlightType == "Wall")
 		{
 			BlockMesh->SetMaterial(0, WallMaterial);
+			BlockMesh->SetCollisionResponseToChannel(ECC_GameTraceChannel4, ECR_Ignore);
 			bIsWall = true;
 		}
 		else if (HighlightType == "Start")

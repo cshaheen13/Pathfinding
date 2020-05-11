@@ -38,6 +38,8 @@ public:
 	UPROPERTY(BlueprintReadWrite)
 	bool bDone;
 
+	int TestRunCount = 0;
+
 protected:
 	// Begin AActor interface
 	virtual void BeginPlay() override;
@@ -62,6 +64,9 @@ public:
 	UPROPERTY(BlueprintReadWrite)
 	TArray<APathfindingBlock*> BlockArray;
 
+	UPROPERTY(BlueprintReadWrite)
+	TArray<APathfindingBlock*> MazeGridArray;
+
 	UFUNCTION(BlueprintCallable)
 	void GetShortestPath(TArray<APathfindingBlock*> VisitedNodes);
 
@@ -69,7 +74,10 @@ public:
 	void HighlightBlock(TArray<APathfindingBlock*> VisitedNodes);
 
 	UFUNCTION(BlueprintCallable)
-	void MazeGenerator();
+	TArray<APathfindingBlock*> CreateMazeGrid();
+
+	UFUNCTION(BlueprintCallable)
+	void MazeGenerator(TArray<APathfindingBlock*> GridArray, int Index, TArray<APathfindingBlock*> VisitedArra);
 
 };
 

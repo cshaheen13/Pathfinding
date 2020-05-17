@@ -46,7 +46,6 @@ protected:
 	// End AActor interface
 
 public:
-
 	/** Handle the block being clicked */
 	void AddScore();
 
@@ -78,6 +77,8 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void MazeGenerator(TArray<APathfindingBlock*> GridArray, int Index, TArray<APathfindingBlock*> VisitedArra);
+
+	int EndDistance;
 
 };
 

@@ -57,6 +57,10 @@ APathfindingBlock::APathfindingBlock()
 	EndMaterial = ConstructorStatics.EndMaterial.Get();
 	PathMaterial = ConstructorStatics.PathMaterial.Get();
 
+	PrimaryActorTick.bCanEverTick = true;
+	bIsHighlightTimeSet = false;
+	SetActorTickEnabled(false);
+
 	Distance = 999;
 	bVisited = false;
 	bIsWall = false;
@@ -64,6 +68,34 @@ APathfindingBlock::APathfindingBlock()
 	bIsEnd = false;
 	bIsEdgeWall = false;
 	bMazeVisited = false;
+}
+
+//Called every frame
+void APathfindingBlock::Tick(float DeltaTime)
+{
+	if (!bIsHighlightTimeSet)
+	{
+		bIsHighlightTimeSet = true;
+		HighlightTime = Distance - (Distance / 1.25);
+		PathTime = OwningGrid->EndDistance - (OwningGrid->EndDistance / 1.25);
+	}
+
+	RunningTime += DeltaTime;
+
+	if ((bIsHighlightTimeSet) && (RunningTime >= HighlightTime))
+	{
+		Highlight(true);
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Highlight Time Set = %s"), bIsHighlightTimeSet ? TEXT("true") : TEXT("false"));
+		UE_LOG(LogTemp, Warning, TEXT("Running Time = %f"), RunningTime);
+	}
+
+	if (bisShortestPath && RunningTime > PathTime)
+	{
+		BlockMesh->SetMaterial(0, PathMaterial);
+	}
 }
 
 void APathfindingBlock::BlockClicked(UPrimitiveComponent* ClickedComp, FKey ButtonClicked)
@@ -103,10 +135,6 @@ void APathfindingBlock::HandleClicked(FString HighlightType)
 			BlockMesh->SetMaterial(0, EndMaterial);
 			bIsEnd = true;
 		}
-		else if (HighlightType == "Path")
-		{
-			BlockMesh->SetMaterial(0, PathMaterial);
-		}
 
 		// Tell the Grid
 		if (OwningGrid != nullptr)
@@ -123,6 +151,7 @@ void APathfindingBlock::HandleClicked(FString HighlightType)
 		bIsWall = false;
 		bIsStart = false;
 		bIsEnd = false;
+		bIsEdgeWall = false;
 		Distance = 999;
 		}
 	}

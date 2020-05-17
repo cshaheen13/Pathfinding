@@ -23,6 +23,21 @@ class APathfindingBlock : public AActor
 public:
 	APathfindingBlock();
 
+	// Called every frame
+	virtual void Tick(float DeltaTime) override;
+
+	UPROPERTY(Category = Highlight, VisibleAnywhere, BlueprintReadWrite)
+	float HighlightTime = 0;
+
+	UPROPERTY(Category = Highlight, VisibleAnywhere, BlueprintReadWrite)
+	float PathTime = 0;
+
+	UPROPERTY(Category = Highlight, VisibleAnywhere, BlueprintReadWrite)
+	bool bIsHighlightTimeSet;
+
+	UPROPERTY(Category = Highlight, VisibleAnywhere, BlueprintReadWrite)
+	float RunningTime;
+
 	/** Are we currently active? */
 	bool bIsActive;
 
@@ -43,6 +58,9 @@ public:
 
 	UPROPERTY(Category = Algorithm, VisibleAnywhere, BlueprintReadOnly)
 	bool bIsEdgeWall;
+
+	UPROPERTY(Category = Algorithm, VisibleAnywhere, BlueprintReadOnly)
+	bool bisShortestPath;
 
 	UPROPERTY(Category = Algorithm, VisibleAnywhere, BlueprintReadOnly)
 	bool bMazeVisited;

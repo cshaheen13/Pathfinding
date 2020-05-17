@@ -29,7 +29,6 @@ APathfindingBlockGrid::APathfindingBlockGrid()
 	bDone = false;
 }
 
-
 void APathfindingBlockGrid::BeginPlay()
 {
 	Super::BeginPlay();
@@ -48,6 +47,7 @@ void APathfindingBlockGrid::BeginPlay()
 
 		// Spawn a block
 		APathfindingBlock* NewBlock = GetWorld()->SpawnActor<APathfindingBlock>(BlockLocation, FRotator(0,0,0));
+		NewBlock->SetActorTickEnabled(false);
 		BlockArray.Add(NewBlock);
 
 		// Tell the block about its owner
@@ -57,7 +57,6 @@ void APathfindingBlockGrid::BeginPlay()
 		}
 	}
 }
-
 
 void APathfindingBlockGrid::AddScore()
 {
@@ -118,10 +117,11 @@ TArray<APathfindingBlock*> APathfindingBlockGrid::DijkstraAlgorithm(TArray<APath
 			if (NeighborFound && !NeighborFound->bIsWall && !NeighborFound->bVisited)
 			{
 				NeighborsHitArray.Add(NeighborFound);
-				NeighborFound->Highlight(true);
+				//NeighborFound->Highlight(true);
 				if ((BlockArray[0]->Distance + 1) < NeighborFound->Distance)
 				{
 					NeighborFound->Distance = 1 + BlockArray[0]->Distance;
+					NeighborFound->SetActorTickEnabled(true);
 				}
 			}
 		}
@@ -134,6 +134,7 @@ TArray<APathfindingBlock*> APathfindingBlockGrid::DijkstraAlgorithm(TArray<APath
 		if (VisitedNodesInOrder.Last()->bIsEnd == true)
 		{
 			UE_LOG(LogTemp, Warning, TEXT("Found End at %s"), *VisitedNodesInOrder.Last()->GetName());
+			EndDistance = VisitedNodesInOrder.Last()->Distance;
 			bDone = true;
 			return VisitedNodesInOrder;
 		}
@@ -199,7 +200,7 @@ void APathfindingBlockGrid::GetShortestPath(TArray<APathfindingBlock*> VisitedNo
 			APathfindingBlock* NeighborFound = Cast<APathfindingBlock>(NeighborHit.GetActor());
 			if (NeighborFound && (NeighborFound->Distance == EndNode->Distance - 1))
 			{
-				NeighborFound->HandleClicked("Path");
+				NeighborFound->bisShortestPath = true;
 				EndNode = NeighborFound;
 			}
 		}

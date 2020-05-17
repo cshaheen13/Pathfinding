@@ -4,6 +4,7 @@
 #include "PathfindingBlock.h"
 #include "Components/TextRenderComponent.h"
 #include "Engine/World.h"
+#include "Kismet/GameplayStatics.h"
 #include "DrawDebugHelpers.h"
 #include "GameFramework/Actor.h"
 #include "TimerManager.h"
@@ -64,6 +65,19 @@ void APathfindingBlockGrid::AddScore()
 	Score++;
 }
 
+void APathfindingBlockGrid::ResetBoard()
+{
+	//TArray <AActor*> Board;
+	//TSubclassOf<APathfindingBlock> ClassToFind;
+	//ClassToFind = APathfindingBlock::StaticClass();
+	//UGameplayStatics::GetAllActorsOfClass(GetWorld(), ClassToFind, Board);
+
+	for (auto& Block : BlockArray)
+	{
+		Block->HandleClicked("Reset");
+	}
+}
+
 TArray<APathfindingBlock*> APathfindingBlockGrid::DijkstraAlgorithm(TArray<APathfindingBlock*> Array)
 {
 	TArray <APathfindingBlock*> VisitedNodesInOrder;
@@ -121,7 +135,7 @@ TArray<APathfindingBlock*> APathfindingBlockGrid::DijkstraAlgorithm(TArray<APath
 				if ((BlockArray[0]->Distance + 1) < NeighborFound->Distance)
 				{
 					NeighborFound->Distance = 1 + BlockArray[0]->Distance;
-					NeighborFound->SetActorTickEnabled(true);
+					NeighborFound->SetActorTickEnabled(true);	
 				}
 			}
 		}
@@ -225,6 +239,7 @@ TArray<APathfindingBlock*> APathfindingBlockGrid::CreateMazeGrid()
 {
 	int row = 1;
 	int MazeIndexCount = 0;
+	ResetBoard();
 
 	//Generate Grid
 	for (int i = 0; i < BlockArray.Num(); i++)

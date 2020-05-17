@@ -33,6 +33,9 @@ public:
 	float PathTime = 0;
 
 	UPROPERTY(Category = Highlight, VisibleAnywhere, BlueprintReadWrite)
+	float PathStartTime = 0;
+
+	UPROPERTY(Category = Highlight, VisibleAnywhere, BlueprintReadWrite)
 	bool bIsHighlightTimeSet;
 
 	UPROPERTY(Category = Highlight, VisibleAnywhere, BlueprintReadWrite)

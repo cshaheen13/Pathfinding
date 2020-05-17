@@ -51,6 +51,8 @@ void APathfindingPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 	PlayerInputComponent->BindAction("SetWall", EInputEvent::IE_Released, this, &APathfindingPawn::ReleaseWall);
 	PlayerInputComponent->BindAction("ResetBlock", EInputEvent::IE_Pressed, this, &APathfindingPawn::ResetBlock);
 	PlayerInputComponent->BindAction("ResetBlock", EInputEvent::IE_Released, this, &APathfindingPawn::ReleaseReset);
+	PlayerInputComponent->BindAction("ResetBoard", EInputEvent::IE_Pressed, this, &APathfindingPawn::ResetBoard);
+
 }
 
 void APathfindingPawn::CalcCamera(float DeltaTime, struct FMinimalViewInfo& OutResult)
@@ -121,6 +123,11 @@ void APathfindingPawn::ResetBlock()
 void APathfindingPawn::ReleaseReset()
 {
 	bRightMouseHeld = false;
+}
+
+void APathfindingPawn::ResetBoard()
+{
+	UE_LOG(LogTemp, Warning, TEXT("Reset Board"));
 }
 
 void APathfindingPawn::TraceForBlock(const FVector& Start, const FVector& End, bool bDrawDebugHelpers)

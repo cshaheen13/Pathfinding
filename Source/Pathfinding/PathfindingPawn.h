@@ -28,6 +28,7 @@ protected:
 	void ReleaseWall();
 	void ResetBlock();
 	void ReleaseReset();
+	void ResetBoard();
 	void TraceForBlock(const FVector& Start, const FVector& End, bool bDrawDebugHelpers);
 	bool bLeftMouseHeld = false;
 	bool bRightMouseHeld = false;

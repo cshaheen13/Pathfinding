@@ -77,7 +77,8 @@ void APathfindingBlock::Tick(float DeltaTime)
 	{
 		bIsHighlightTimeSet = true;
 		HighlightTime = Distance - (Distance / 1.25);
-		PathTime = OwningGrid->EndDistance - (OwningGrid->EndDistance / 1.25);
+		PathStartTime = OwningGrid->EndDistance - (OwningGrid->EndDistance / 1.25) + 1;
+		PathTime = PathStartTime + (HighlightTime - (HighlightTime/2));
 	}
 
 	RunningTime += DeltaTime;
@@ -92,7 +93,7 @@ void APathfindingBlock::Tick(float DeltaTime)
 		UE_LOG(LogTemp, Warning, TEXT("Running Time = %f"), RunningTime);
 	}
 
-	if (bisShortestPath && RunningTime > PathTime)
+	if (bisShortestPath && (RunningTime > PathTime))
 	{
 		BlockMesh->SetMaterial(0, PathMaterial);
 	}
@@ -135,6 +136,18 @@ void APathfindingBlock::HandleClicked(FString HighlightType)
 			BlockMesh->SetMaterial(0, EndMaterial);
 			bIsEnd = true;
 		}
+		else if (HighlightType == "Reset")
+		{
+			BlockMesh->SetMaterial(0, BlueMaterial);
+			bIsActive = false;
+			bIsWall = false;
+			bIsStart = false;
+			bIsEnd = false;
+			bIsEdgeWall = false;
+			bMazeVisited = false;
+			Distance = 999;
+			MazeIndex = 0;
+		}
 
 		// Tell the Grid
 		if (OwningGrid != nullptr)
@@ -152,7 +165,9 @@ void APathfindingBlock::HandleClicked(FString HighlightType)
 		bIsStart = false;
 		bIsEnd = false;
 		bIsEdgeWall = false;
+		bMazeVisited = false;
 		Distance = 999;
+		MazeIndex = 0;
 		}
 	}
 }

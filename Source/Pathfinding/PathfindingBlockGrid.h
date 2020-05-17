@@ -49,6 +49,8 @@ public:
 	/** Handle the block being clicked */
 	void AddScore();
 
+	void ResetBoard();
+
 	UFUNCTION(BlueprintCallable)
 	TArray<APathfindingBlock*> DijkstraAlgorithm(TArray<APathfindingBlock*> Array);
 

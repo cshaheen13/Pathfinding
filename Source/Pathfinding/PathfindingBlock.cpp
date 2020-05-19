@@ -93,7 +93,7 @@ void APathfindingBlock::Tick(float DeltaTime)
 		UE_LOG(LogTemp, Warning, TEXT("Running Time = %f"), RunningTime);
 	}
 
-	if (bisShortestPath && (RunningTime > PathTime))
+	if (bIsShortestPath && (RunningTime > PathTime))
 	{
 		BlockMesh->SetMaterial(0, PathMaterial);
 	}
@@ -138,6 +138,15 @@ void APathfindingBlock::HandleClicked(FString HighlightType)
 		}
 		else if (HighlightType == "Reset")
 		{
+			SetActorTickEnabled(false);
+			HighlightTime = 0;
+			PathTime = 0;
+			PathStartTime = 0;
+			bIsHighlightTimeSet = false;
+			RunningTime = 0;
+			bIsShortestPath = false;
+			bVisited = false;
+
 			BlockMesh->SetMaterial(0, BlueMaterial);
 			bIsActive = false;
 			bIsWall = false;
@@ -159,15 +168,24 @@ void APathfindingBlock::HandleClicked(FString HighlightType)
 	{
 		if (HighlightType == "Reset")
 		{
-		BlockMesh->SetMaterial(0, BlueMaterial);
-		bIsActive = false;
-		bIsWall = false;
-		bIsStart = false;
-		bIsEnd = false;
-		bIsEdgeWall = false;
-		bMazeVisited = false;
-		Distance = 999;
-		MazeIndex = 0;
+			SetActorTickEnabled(false);
+			HighlightTime = 0;
+			PathTime = 0;
+			PathStartTime = 0;
+			bIsHighlightTimeSet = false;
+			RunningTime = 0;
+			bIsShortestPath = false;
+			bVisited = false;
+
+			BlockMesh->SetMaterial(0, BlueMaterial);
+			bIsActive = false;
+			bIsWall = false;
+			bIsStart = false;
+			bIsEnd = false;
+			bIsEdgeWall = false;
+			bMazeVisited = false;
+			Distance = 999;
+			MazeIndex = 0;
 		}
 	}
 }

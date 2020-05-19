@@ -63,7 +63,7 @@ public:
 	bool bIsEdgeWall;
 
 	UPROPERTY(Category = Algorithm, VisibleAnywhere, BlueprintReadOnly)
-	bool bisShortestPath;
+	bool bIsShortestPath;
 
 	UPROPERTY(Category = Algorithm, VisibleAnywhere, BlueprintReadOnly)
 	bool bMazeVisited;

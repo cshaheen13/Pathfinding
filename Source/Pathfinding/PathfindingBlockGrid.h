@@ -62,8 +62,14 @@ public:
 	/** Returns ScoreText subobject **/
 	FORCEINLINE class UTextRenderComponent* GetScoreText() const { return ScoreText; }
 
-	UPROPERTY(BlueprintReadWrite)
+	UPROPERTY(Category = GridArray, BlueprintReadWrite, VisibleAnywhere)
 	TArray<APathfindingBlock*> BlockArray;
+
+	UPROPERTY(Category = GridArray, BlueprintReadWrite, VisibleAnywhere)
+	TArray <APathfindingBlock*> VisitedNodesInOrder;
+
+	UPROPERTY(Category = GridArray, BlueprintReadWrite, VisibleAnywhere)
+	TArray<APathfindingBlock*> UnvisitedNodes;
 
 	UPROPERTY(BlueprintReadWrite)
 	TArray<APathfindingBlock*> MazeGridArray;

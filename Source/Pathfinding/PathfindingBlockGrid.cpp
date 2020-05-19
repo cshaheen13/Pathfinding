@@ -76,19 +76,26 @@ void APathfindingBlockGrid::ResetBoard()
 	{
 		Block->HandleClicked("Reset");
 	}
+
+	VisitedNodesInOrder.Empty();
+	UnvisitedNodes.Empty();
 }
 
 TArray<APathfindingBlock*> APathfindingBlockGrid::DijkstraAlgorithm(TArray<APathfindingBlock*> Array)
 {
-	TArray <APathfindingBlock*> VisitedNodesInOrder;
-	while (BlockArray.Num() != 0)
+	for (auto& Block : Array)
+	{
+		UnvisitedNodes.Add(Block);
+	}
+
+	while (UnvisitedNodes.Num() != 0)
 	{
 		//Sort block array by distance
-		BlockArray = SortBlocksByDistance(BlockArray, 0, BlockArray.Num() - 1);
+		UnvisitedNodes = SortBlocksByDistance(UnvisitedNodes, 0, UnvisitedNodes.Num() - 1);
 		//Set 1st element to visited
-		BlockArray[0]->bVisited = true;
+		UnvisitedNodes[0]->bVisited = true;
 
-		if (BlockArray[0]->Distance == 999) 
+		if (UnvisitedNodes[0]->Distance == 999)
 		{ 
 			UE_LOG(LogTemp, Warning, TEXT("Blocked Path"));
 			bDone = true;
@@ -99,7 +106,7 @@ TArray<APathfindingBlock*> APathfindingBlockGrid::DijkstraAlgorithm(TArray<APath
 		TArray <APathfindingBlock*> NeighborsHitArray;
 		FHitResult NeighborHit;
 
-		FVector Start = BlockArray[0]->GetActorLocation();
+		FVector Start = UnvisitedNodes[0]->GetActorLocation();
 		FVector EndN = Start + FVector(75, 0, 0);
 		FVector EndS = Start + FVector(-75, 0, 0);
 		FVector EndW = Start + FVector(0, -75, 0);
@@ -132,17 +139,17 @@ TArray<APathfindingBlock*> APathfindingBlockGrid::DijkstraAlgorithm(TArray<APath
 			{
 				NeighborsHitArray.Add(NeighborFound);
 				//NeighborFound->Highlight(true);
-				if ((BlockArray[0]->Distance + 1) < NeighborFound->Distance)
+				if ((UnvisitedNodes[0]->Distance + 1) < NeighborFound->Distance)
 				{
-					NeighborFound->Distance = 1 + BlockArray[0]->Distance;
+					NeighborFound->Distance = 1 + UnvisitedNodes[0]->Distance;
 					NeighborFound->SetActorTickEnabled(true);	
 				}
 			}
 		}
 
 		//Push visited node (element 0) to VisitedNodesInOrder Array and Remove if from the BlockArray
-		VisitedNodesInOrder.Add(BlockArray[0]);
-		BlockArray.RemoveAt(0);
+		VisitedNodesInOrder.Add(UnvisitedNodes[0]);
+		UnvisitedNodes.RemoveAt(0);
 
 		//If 1st element->bIsEnd then return VisitedNodesInOrder
 		if (VisitedNodesInOrder.Last()->bIsEnd == true)
@@ -214,7 +221,7 @@ void APathfindingBlockGrid::GetShortestPath(TArray<APathfindingBlock*> VisitedNo
 			APathfindingBlock* NeighborFound = Cast<APathfindingBlock>(NeighborHit.GetActor());
 			if (NeighborFound && (NeighborFound->Distance == EndNode->Distance - 1))
 			{
-				NeighborFound->bisShortestPath = true;
+				NeighborFound->bIsShortestPath = true;
 				EndNode = NeighborFound;
 			}
 		}

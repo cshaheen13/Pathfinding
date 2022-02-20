@@ -88,7 +88,7 @@ TArray<APathfindingBlock*> APathfindingBlockGrid::DijkstraAlgorithm(TArray<APath
 		UnvisitedNodes.Add(Block);
 	}
 
-	while (UnvisitedNodes.Num() != 0)
+	while (!bDone)
 	{
 		//Sort block array by distance
 		UnvisitedNodes = SortBlocksByDistance(UnvisitedNodes, 0, UnvisitedNodes.Num() - 1);
@@ -96,7 +96,7 @@ TArray<APathfindingBlock*> APathfindingBlockGrid::DijkstraAlgorithm(TArray<APath
 		UnvisitedNodes[0]->bVisited = true;
 
 		if (UnvisitedNodes[0]->Distance == 999)
-		{ 
+		{
 			UE_LOG(LogTemp, Warning, TEXT("Blocked Path"));
 			bDone = true;
 			return VisitedNodesInOrder;
@@ -147,7 +147,7 @@ TArray<APathfindingBlock*> APathfindingBlockGrid::DijkstraAlgorithm(TArray<APath
 			}
 		}
 
-		//Push visited node (element 0) to VisitedNodesInOrder Array and Remove if from the BlockArray
+		//Push visited node (element 0) to VisitedNodesInOrder Array and Remove it from the BlockArray
 		VisitedNodesInOrder.Add(UnvisitedNodes[0]);
 		UnvisitedNodes.RemoveAt(0);
 
@@ -157,11 +157,15 @@ TArray<APathfindingBlock*> APathfindingBlockGrid::DijkstraAlgorithm(TArray<APath
 			UE_LOG(LogTemp, Warning, TEXT("Found End at %s"), *VisitedNodesInOrder.Last()->GetName());
 			EndDistance = VisitedNodesInOrder.Last()->Distance;
 			bDone = true;
+			bPathAvailable = true;
 			return VisitedNodesInOrder;
 		}
 	}
+
 	return VisitedNodesInOrder;
 }
+
+
 
 TArray<APathfindingBlock*> APathfindingBlockGrid::SortBlocksByDistance(TArray<APathfindingBlock*> UnvisitedArray, int LeftIndex, int RightIndex)
 {
@@ -181,51 +185,55 @@ TArray<APathfindingBlock*> APathfindingBlockGrid::SortBlocksByDistance(TArray<AP
 
 void APathfindingBlockGrid::GetShortestPath(TArray<APathfindingBlock*> VisitedNodes)
 {
-	//Traverse backwards through the visited nodes
+	//Traverse backwards through the visited nodes as long as there is a path
 	APathfindingBlock* EndNode = VisitedNodes.Last();
-	while (!EndNode->bIsStart)
+	if (bPathAvailable == true)
 	{
-		//Check if the node is a neighbor and the distance = currentDistance - 1
-		int dist = EndNode->Distance;
-
-		FHitResult NeighborHit;
-
-		FVector Start = EndNode->GetActorLocation();
-		FVector EndN = Start + FVector(75, 0, 0);
-		FVector EndS = Start + FVector(-75, 0, 0);
-		FVector EndW = Start + FVector(0, -75, 0);
-		FVector EndE = Start + FVector(0, 75, 0);
-		FVector End;
-
-		for (int dir = 1; dir <= 4; dir++)
-		{
-			if (dir == 1)
+		while (!EndNode->bIsStart)
 			{
-				End = EndN;
-			}
-			else if (dir == 2)
-			{
-				End = EndS;
-			}
-			else if (dir == 3)
-			{
-				End = EndW;
-			}
-			else if (dir == 4)
-			{
-				End = EndE;
-			}
+				//Check if the node is a neighbor and the distance = currentDistance - 1
+				int dist = EndNode->Distance;
 
-			GetWorld()->LineTraceSingleByChannel(NeighborHit, Start, End, ECC_Visibility);
+				FHitResult NeighborHit;
 
-			APathfindingBlock* NeighborFound = Cast<APathfindingBlock>(NeighborHit.GetActor());
-			if (NeighborFound && (NeighborFound->Distance == EndNode->Distance - 1))
-			{
-				NeighborFound->bIsShortestPath = true;
-				EndNode = NeighborFound;
+				FVector Start = EndNode->GetActorLocation();
+				FVector EndN = Start + FVector(75, 0, 0);
+				FVector EndS = Start + FVector(-75, 0, 0);
+				FVector EndW = Start + FVector(0, -75, 0);
+				FVector EndE = Start + FVector(0, 75, 0);
+				FVector End;
+
+				for (int dir = 1; dir <= 4; dir++)
+				{
+					if (dir == 1)
+					{
+						End = EndN;
+					}
+					else if (dir == 2)
+					{
+						End = EndS;
+					}
+					else if (dir == 3)
+					{
+						End = EndW;
+					}
+					else if (dir == 4)
+					{
+						End = EndE;
+					}
+
+					GetWorld()->LineTraceSingleByChannel(NeighborHit, Start, End, ECC_Visibility);
+
+					APathfindingBlock* NeighborFound = Cast<APathfindingBlock>(NeighborHit.GetActor());
+					if (NeighborFound && (NeighborFound->Distance == EndNode->Distance - 1))
+					{
+						NeighborFound->bIsShortestPath = true;
+						EndNode = NeighborFound;
+					}
+				}
 			}
-		}
 	}
+	
 }
 
 void APathfindingBlockGrid::HighlightBlock(TArray<APathfindingBlock*> VisitedNodes)

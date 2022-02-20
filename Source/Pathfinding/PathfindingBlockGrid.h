@@ -38,6 +38,9 @@ public:
 	UPROPERTY(BlueprintReadWrite)
 	bool bDone;
 
+	UPROPERTY(BlueprintReadWrite)
+	bool bPathAvailable;
+
 	int TestRunCount = 0;
 
 protected:

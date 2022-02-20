@@ -89,8 +89,8 @@ void APathfindingBlock::Tick(float DeltaTime)
 	}
 	else
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Highlight Time Set = %s"), bIsHighlightTimeSet ? TEXT("true") : TEXT("false"));
-		UE_LOG(LogTemp, Warning, TEXT("Running Time = %f"), RunningTime);
+		//UE_LOG(LogTemp, Warning, TEXT("Highlight Time Set = %s"), bIsHighlightTimeSet ? TEXT("true") : TEXT("false"));
+		//UE_LOG(LogTemp, Warning, TEXT("Running Time = %f"), RunningTime);
 	}
 
 	if (bIsShortestPath && (RunningTime > PathTime))

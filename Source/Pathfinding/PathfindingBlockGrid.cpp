@@ -79,6 +79,8 @@ void APathfindingBlockGrid::ResetBoard()
 
 	VisitedNodesInOrder.Empty();
 	UnvisitedNodes.Empty();
+	bDone = false;
+	bPathAvailable = false;
 }
 
 TArray<APathfindingBlock*> APathfindingBlockGrid::DijkstraAlgorithm(TArray<APathfindingBlock*> Array)
@@ -190,6 +192,7 @@ void APathfindingBlockGrid::GetShortestPath(TArray<APathfindingBlock*> VisitedNo
 	if (bPathAvailable == true)
 	{
 		while (!EndNode->bIsStart)
+
 			{
 				//Check if the node is a neighbor and the distance = currentDistance - 1
 				int dist = EndNode->Distance;

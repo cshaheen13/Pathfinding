@@ -76,8 +76,8 @@ void APathfindingBlock::Tick(float DeltaTime)
 	if (!bIsHighlightTimeSet)
 	{
 		bIsHighlightTimeSet = true;
-		HighlightTime = Distance - (Distance / 1.25);
-		PathStartTime = OwningGrid->EndDistance - (OwningGrid->EndDistance / 1.25) + 1;
+		HighlightTime = Distance - (Distance / 1.15);
+		PathStartTime = OwningGrid->EndDistance - (OwningGrid->EndDistance / 1.15) + 0.5;
 		PathTime = PathStartTime + (HighlightTime - (HighlightTime/2));
 	}
 

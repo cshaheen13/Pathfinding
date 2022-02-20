@@ -52,6 +52,7 @@ public:
 	/** Handle the block being clicked */
 	void AddScore();
 
+	UFUNCTION(BlueprintCallable)
 	void ResetBoard();
 
 	UFUNCTION(BlueprintCallable)

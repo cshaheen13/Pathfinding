@@ -127,7 +127,7 @@ void APathfindingPawn::ReleaseReset()
 
 void APathfindingPawn::ResetBoard()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Reset Board"));
+	//UE_LOG(LogTemp, Warning, TEXT("Reset Board"));
 }
 
 void APathfindingPawn::TraceForBlock(const FVector& Start, const FVector& End, bool bDrawDebugHelpers)

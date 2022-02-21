@@ -167,6 +167,20 @@ TArray<APathfindingBlock*> APathfindingBlockGrid::DijkstraAlgorithm(TArray<APath
 	return VisitedNodesInOrder;
 }
 
+TArray<APathfindingBlock*> APathfindingBlockGrid::AStarAlgorithm(TArray<APathfindingBlock*> Array)
+{
+	for (auto& Block : Array)
+	{
+		UnvisitedNodes.Add(Block);
+		if (Block->bIsEnd)
+		{
+
+		}
+	}
+	//int heuristic = std::abs(startX - endX) + std::abs(startY - endY)
+	return VisitedNodesInOrder;
+}
+
 
 
 TArray<APathfindingBlock*> APathfindingBlockGrid::SortBlocksByDistance(TArray<APathfindingBlock*> UnvisitedArray, int LeftIndex, int RightIndex)

@@ -59,6 +59,9 @@ public:
 	TArray<APathfindingBlock*> DijkstraAlgorithm(TArray<APathfindingBlock*> Array);
 
 	UFUNCTION(BlueprintCallable)
+	TArray<APathfindingBlock*> AStarAlgorithm(TArray<APathfindingBlock*> Array);
+
+	UFUNCTION(BlueprintCallable)
 	TArray<APathfindingBlock*> SortBlocksByDistance(TArray<APathfindingBlock*> UnvisitedArray, int LeftIndex, int RightIndex);
 
 	/** Returns DummyRoot subobject **/

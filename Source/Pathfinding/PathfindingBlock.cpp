@@ -127,14 +127,39 @@ void APathfindingBlock::HandleClicked(FString HighlightType)
 		}
 		else if (HighlightType == "Start")
 		{
+			for (auto& Block : OwningGrid->BlockArray)
+			{
+				if (Block->bIsStart == true)
+				{
+					Block->bIsStart = false;
+					Block->BlockMesh->SetMaterial(0, BlueMaterial);
+					Block->bIsActive = false;
+					Block->Distance = 999;
+				}
+
+			}
+
 			BlockMesh->SetMaterial(0, StartMaterial);
 			Distance = 0;
 			bIsStart = true;
 		}
 		else if (HighlightType == "End")
 		{
+			//UE_LOG(LogTemp, Warning, TEXT("The grid that owns this block is: %s"), *this->OwningGrid->GetName());
+			for (auto& Block : OwningGrid->BlockArray)
+			{
+				if (Block->bIsEnd == true)
+				{
+					Block->bIsEnd = false;
+					Block->BlockMesh->SetMaterial(0, BlueMaterial);
+					Block->bIsActive = false;
+				}
+				
+			}
+
 			BlockMesh->SetMaterial(0, EndMaterial);
 			bIsEnd = true;
+			
 		}
 		else if (HighlightType == "Reset")
 		{

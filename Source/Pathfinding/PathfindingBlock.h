@@ -48,10 +48,10 @@ public:
 	bool bVisited;
 
 	UPROPERTY(Category = Algorithm, VisibleAnywhere, BlueprintReadWrite)
-	int Distance;
+	float Distance;
 
 	UPROPERTY(Category = Algorithm, VisibleAnywhere, BlueprintReadWrite)
-	int Heuristic;
+	float Heuristic;
 
 	UPROPERTY(Category = Algorithm, VisibleAnywhere, BlueprintReadOnly)
 	bool bIsWall;

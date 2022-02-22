@@ -61,7 +61,7 @@ APathfindingBlock::APathfindingBlock()
 	bIsHighlightTimeSet = false;
 	SetActorTickEnabled(false);
 
-	Distance = 999;
+	Distance = 9999;
 	bVisited = false;
 	bIsWall = false;
 	bIsStart = false;
@@ -73,6 +73,7 @@ APathfindingBlock::APathfindingBlock()
 //Called every frame
 void APathfindingBlock::Tick(float DeltaTime)
 {
+	//Need to update to also be based on heuristic, to highlight when it is visited/looked at?
 	if (!bIsHighlightTimeSet)
 	{
 		bIsHighlightTimeSet = true;
@@ -134,7 +135,7 @@ void APathfindingBlock::HandleClicked(FString HighlightType)
 					Block->bIsStart = false;
 					Block->BlockMesh->SetMaterial(0, BlueMaterial);
 					Block->bIsActive = false;
-					Block->Distance = 999;
+					Block->Distance = 9999;
 				}
 
 			}
@@ -159,6 +160,7 @@ void APathfindingBlock::HandleClicked(FString HighlightType)
 
 			BlockMesh->SetMaterial(0, EndMaterial);
 			bIsEnd = true;
+			OwningGrid->EndBlock = this;
 			OwningGrid->EndLocation = GetActorLocation();
 			
 		}
@@ -180,7 +182,7 @@ void APathfindingBlock::HandleClicked(FString HighlightType)
 			bIsEnd = false;
 			bIsEdgeWall = false;
 			bMazeVisited = false;
-			Distance = 999;
+			Distance = 9999;
 			MazeIndex = 0;
 		}
 
@@ -210,7 +212,7 @@ void APathfindingBlock::HandleClicked(FString HighlightType)
 			bIsEnd = false;
 			bIsEdgeWall = false;
 			bMazeVisited = false;
-			Distance = 999;
+			Distance = 9999;
 			MazeIndex = 0;
 		}
 	}

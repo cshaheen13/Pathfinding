@@ -100,6 +100,9 @@ public:
 
 	FVector EndLocation;
 
+	UPROPERTY(Category = Grid, BlueprintReadWrite, VisibleAnywhere)
+	AActor* EndBlock;
+
 	int TotalBlocksVisited = 0;
 
 };

@@ -67,14 +67,25 @@ void APathfindingBlockGrid::AddScore()
 
 void APathfindingBlockGrid::ResetBoard()
 {
-	//TArray <AActor*> Board;
-	//TSubclassOf<APathfindingBlock> ClassToFind;
-	//ClassToFind = APathfindingBlock::StaticClass();
-	//UGameplayStatics::GetAllActorsOfClass(GetWorld(), ClassToFind, Board);
-
 	for (auto& Block : BlockArray)
 	{
 		Block->HandleClicked("Reset");
+	}
+
+	VisitedNodesInOrder.Empty();
+	UnvisitedNodes.Empty();
+	bDone = false;
+	bPathAvailable = false;
+}
+
+void APathfindingBlockGrid::ResetPathfinding()
+{
+	for (auto& Block : BlockArray)
+	{
+		if (!Block->bIsEnd && !Block->bIsStart && !Block->bIsWall)
+		{
+			Block->HandleClicked("Reset");
+		}
 	}
 
 	VisitedNodesInOrder.Empty();
@@ -171,6 +182,7 @@ TArray<APathfindingBlock*> APathfindingBlockGrid::DijkstraAlgorithm(TArray<APath
 
 TArray<APathfindingBlock*> APathfindingBlockGrid::AStarAlgorithm(TArray<APathfindingBlock*> Array)
 {
+	float TimeCount = 1;
 	//Need to fix the priority queue, currently not finding shortest path 
 	TotalBlocksVisited = 0;
 	for (auto& Block : Array)
@@ -241,6 +253,7 @@ TArray<APathfindingBlock*> APathfindingBlockGrid::AStarAlgorithm(TArray<APathfin
 		UE_LOG(LogTemp, Warning, TEXT("Heuristic (%f) + Distance (%f) = %f"), UnvisitedNodes[0]->Heuristic, UnvisitedNodes[0]->Distance, UnvisitedNodes[0]->Heuristic + UnvisitedNodes[0]->Distance);
 		VisitedNodesInOrder.Add(UnvisitedNodes[0]);
 		UnvisitedNodes.RemoveAt(0);
+	
 
 		//If 1st element->bIsEnd then return VisitedNodesInOrder
 		if (VisitedNodesInOrder.Last()->bIsEnd == true)
@@ -287,7 +300,6 @@ TArray<APathfindingBlock*> APathfindingBlockGrid::SortBlocksByWeightedDistance(T
 			j--;
 		}
 	}
-	UE_LOG(LogTemp, Warning, TEXT("Sorted"));
 	return UnvisitedArray;
 }
 

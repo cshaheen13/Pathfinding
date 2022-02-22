@@ -145,7 +145,7 @@ void APathfindingBlock::HandleClicked(FString HighlightType)
 		}
 		else if (HighlightType == "End")
 		{
-			//UE_LOG(LogTemp, Warning, TEXT("The grid that owns this block is: %s"), *this->OwningGrid->GetName());
+			//Remove previous set end points first
 			for (auto& Block : OwningGrid->BlockArray)
 			{
 				if (Block->bIsEnd == true)
@@ -159,6 +159,7 @@ void APathfindingBlock::HandleClicked(FString HighlightType)
 
 			BlockMesh->SetMaterial(0, EndMaterial);
 			bIsEnd = true;
+			OwningGrid->EndLocation = GetActorLocation();
 			
 		}
 		else if (HighlightType == "Reset")

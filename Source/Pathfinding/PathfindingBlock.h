@@ -50,6 +50,9 @@ public:
 	UPROPERTY(Category = Algorithm, VisibleAnywhere, BlueprintReadWrite)
 	int Distance;
 
+	UPROPERTY(Category = Algorithm, VisibleAnywhere, BlueprintReadWrite)
+	int Heuristic;
+
 	UPROPERTY(Category = Algorithm, VisibleAnywhere, BlueprintReadOnly)
 	bool bIsWall;
 

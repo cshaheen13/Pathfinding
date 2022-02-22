@@ -85,6 +85,7 @@ void APathfindingBlockGrid::ResetBoard()
 
 TArray<APathfindingBlock*> APathfindingBlockGrid::DijkstraAlgorithm(TArray<APathfindingBlock*> Array)
 {
+	TotalBlocksVisited = 0;
 	for (auto& Block : Array)
 	{
 		UnvisitedNodes.Add(Block);
@@ -96,7 +97,7 @@ TArray<APathfindingBlock*> APathfindingBlockGrid::DijkstraAlgorithm(TArray<APath
 		UnvisitedNodes = SortBlocksByDistance(UnvisitedNodes, 0, UnvisitedNodes.Num() - 1);
 		//Set 1st element to visited
 		UnvisitedNodes[0]->bVisited = true;
-
+		TotalBlocksVisited = TotalBlocksVisited + 1;
 		if (UnvisitedNodes[0]->Distance == 999)
 		{
 			UE_LOG(LogTemp, Warning, TEXT("Blocked Path"));
@@ -160,6 +161,7 @@ TArray<APathfindingBlock*> APathfindingBlockGrid::DijkstraAlgorithm(TArray<APath
 			EndDistance = VisitedNodesInOrder.Last()->Distance;
 			bDone = true;
 			bPathAvailable = true;
+			UE_LOG(LogTemp, Warning, TEXT("Number of Visited Blocks = %i"), TotalBlocksVisited);
 			return VisitedNodesInOrder;
 		}
 	}
@@ -169,15 +171,88 @@ TArray<APathfindingBlock*> APathfindingBlockGrid::DijkstraAlgorithm(TArray<APath
 
 TArray<APathfindingBlock*> APathfindingBlockGrid::AStarAlgorithm(TArray<APathfindingBlock*> Array)
 {
+	TotalBlocksVisited = 0;
 	for (auto& Block : Array)
 	{
+		Block->Heuristic = (std::abs(Block->GetActorLocation().X - EndLocation.X) + std::abs(Block->GetActorLocation().Y - EndLocation.Y) / 10);
 		UnvisitedNodes.Add(Block);
-		if (Block->bIsEnd)
+	}
+	
+	while (!bDone)
+	{
+		//Sort block array by distance
+		UnvisitedNodes = SortBlocksByWeightedDistance(UnvisitedNodes, 0, UnvisitedNodes.Num() - 1);
+		//Set 1st element to visited
+		UnvisitedNodes[0]->bVisited = true;
+		TotalBlocksVisited = TotalBlocksVisited + 1;
+		if (UnvisitedNodes[0]->Distance == 999)
 		{
+			UE_LOG(LogTemp, Warning, TEXT("Blocked Path"));
+			bDone = true;
+			return VisitedNodesInOrder;
+		}
 
+		//Push neighbor nodes (line trace) to NeighborArray
+		TArray <APathfindingBlock*> NeighborsHitArray;
+		FHitResult NeighborHit;
+
+		FVector Start = UnvisitedNodes[0]->GetActorLocation();
+		FVector EndN = Start + FVector(75, 0, 0);
+		FVector EndS = Start + FVector(-75, 0, 0);
+		FVector EndW = Start + FVector(0, -75, 0);
+		FVector EndE = Start + FVector(0, 75, 0);
+		FVector End;
+
+		for (int dir = 1; dir <= 4; dir++)
+		{
+			if (dir == 1)
+			{
+				End = EndN;
+			}
+			else if (dir == 2)
+			{
+				End = EndS;
+			}
+			else if (dir == 3)
+			{
+				End = EndW;
+			}
+			else if (dir == 4)
+			{
+				End = EndE;
+			}
+
+			GetWorld()->LineTraceSingleByChannel(NeighborHit, Start, End, ECC_Visibility);
+
+			APathfindingBlock* NeighborFound = Cast<APathfindingBlock>(NeighborHit.GetActor());
+			if (NeighborFound && !NeighborFound->bIsWall && !NeighborFound->bVisited)
+			{
+				NeighborsHitArray.Add(NeighborFound);
+				//NeighborFound->Highlight(true);
+				if ((UnvisitedNodes[0]->Distance + 1) < NeighborFound->Distance)
+				{
+					NeighborFound->Distance = 1 + UnvisitedNodes[0]->Distance;
+					NeighborFound->SetActorTickEnabled(true);
+				}
+			}
+		}
+
+		//Push visited node (element 0) to VisitedNodesInOrder Array and Remove it from the BlockArray
+		VisitedNodesInOrder.Add(UnvisitedNodes[0]);
+		UnvisitedNodes.RemoveAt(0);
+
+		//If 1st element->bIsEnd then return VisitedNodesInOrder
+		if (VisitedNodesInOrder.Last()->bIsEnd == true)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Found End at %s"), *VisitedNodesInOrder.Last()->GetName());
+			EndDistance = VisitedNodesInOrder.Last()->Distance;
+			bDone = true;
+			bPathAvailable = true;
+			UE_LOG(LogTemp, Warning, TEXT("Number of Visited Blocks = %i"), TotalBlocksVisited);
+			return VisitedNodesInOrder;
 		}
 	}
-	//int heuristic = std::abs(startX - endX) + std::abs(startY - endY)
+
 	return VisitedNodesInOrder;
 }
 
@@ -190,6 +265,22 @@ TArray<APathfindingBlock*> APathfindingBlockGrid::SortBlocksByDistance(TArray<AP
 		int temp = UnvisitedArray[i]->Distance;
 		int j = i - 1;
 		while (j >= LeftIndex && UnvisitedArray[j]->Distance > temp)
+		{
+			UnvisitedArray.Swap(j + 1, j);
+			j--;
+		}
+	}
+
+	return UnvisitedArray;
+}
+
+TArray<APathfindingBlock*> APathfindingBlockGrid::SortBlocksByWeightedDistance(TArray<APathfindingBlock*> UnvisitedArray, int LeftIndex, int RightIndex)
+{
+	for (int i = LeftIndex + 1; i <= RightIndex; i++)
+	{
+		int temp = UnvisitedArray[i]->Distance + UnvisitedArray[i]->Heuristic;
+		int j = i - 1;
+		while (j >= LeftIndex && (UnvisitedArray[j]->Distance + UnvisitedArray[j]->Heuristic) > temp)
 		{
 			UnvisitedArray.Swap(j + 1, j);
 			j--;

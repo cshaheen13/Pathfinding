@@ -64,6 +64,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	TArray<APathfindingBlock*> SortBlocksByDistance(TArray<APathfindingBlock*> UnvisitedArray, int LeftIndex, int RightIndex);
 
+	UFUNCTION(BlueprintCallable)
+	TArray<APathfindingBlock*> SortBlocksByWeightedDistance(TArray<APathfindingBlock*> UnvisitedArray, int LeftIndex, int RightIndex);
+
 	/** Returns DummyRoot subobject **/
 	FORCEINLINE class USceneComponent* GetDummyRoot() const { return DummyRoot; }
 	/** Returns ScoreText subobject **/
@@ -94,6 +97,10 @@ public:
 	void MazeGenerator(TArray<APathfindingBlock*> GridArray, int Index, TArray<APathfindingBlock*> VisitedArra);
 
 	int EndDistance;
+
+	FVector EndLocation;
+
+	int TotalBlocksVisited = 0;
 
 };
 

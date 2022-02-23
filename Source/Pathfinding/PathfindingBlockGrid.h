@@ -56,6 +56,9 @@ public:
 	void ResetBoard();
 
 	UFUNCTION(BlueprintCallable)
+	void ResetPathfinding();
+
+	UFUNCTION(BlueprintCallable)
 	TArray<APathfindingBlock*> DijkstraAlgorithm(TArray<APathfindingBlock*> Array);
 
 	UFUNCTION(BlueprintCallable)

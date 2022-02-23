@@ -67,14 +67,25 @@ void APathfindingBlockGrid::AddScore()
 
 void APathfindingBlockGrid::ResetBoard()
 {
-	//TArray <AActor*> Board;
-	//TSubclassOf<APathfindingBlock> ClassToFind;
-	//ClassToFind = APathfindingBlock::StaticClass();
-	//UGameplayStatics::GetAllActorsOfClass(GetWorld(), ClassToFind, Board);
-
 	for (auto& Block : BlockArray)
 	{
 		Block->HandleClicked("Reset");
+	}
+
+	VisitedNodesInOrder.Empty();
+	UnvisitedNodes.Empty();
+	bDone = false;
+	bPathAvailable = false;
+}
+
+void APathfindingBlockGrid::ResetPathfinding()
+{
+	for (auto& Block : BlockArray)
+	{
+		if (!Block->bIsEnd && !Block->bIsStart && !Block->bIsWall)
+		{
+			Block->HandleClicked("Reset");
+		}
 	}
 
 	VisitedNodesInOrder.Empty();
@@ -171,7 +182,7 @@ TArray<APathfindingBlock*> APathfindingBlockGrid::DijkstraAlgorithm(TArray<APath
 
 TArray<APathfindingBlock*> APathfindingBlockGrid::AStarAlgorithm(TArray<APathfindingBlock*> Array)
 {
-	//Need to fix the priority queue, currently not finding shortest path 
+	float TimeCount = 1;
 	TotalBlocksVisited = 0;
 	for (auto& Block : Array)
 	{
@@ -287,7 +298,6 @@ TArray<APathfindingBlock*> APathfindingBlockGrid::SortBlocksByWeightedDistance(T
 			j--;
 		}
 	}
-	UE_LOG(LogTemp, Warning, TEXT("Sorted"));
 	return UnvisitedArray;
 }
 
